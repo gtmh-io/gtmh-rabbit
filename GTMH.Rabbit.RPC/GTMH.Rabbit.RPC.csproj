@@ -7,6 +7,9 @@
     <Nullable>enable</Nullable>
     <OutputPath>vsbin/$(Configuration)</OutputPath>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>rabbitmq,async,rpc,configuration free,reentrant,concurrent,console,client,server</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,6 +22,7 @@
     <None Remove="GTMH.Rabbit.RPC.Benchmarking\**" />
     <None Remove="GTMH.Rabbit.RPC.UnitTests\**" />
     <None Remove="vsbin\**" />
+    <None Include="README.md" Pack="true" PackagePath="\"/>
   </ItemGroup>
 
   <ItemGroup>

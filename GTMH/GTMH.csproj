@@ -7,6 +7,8 @@
     <Nullable>enable</Nullable>
     <OutputPath>vsbin/$(Configuration)</OutputPath>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,6 +18,7 @@
     <EmbeddedResource Remove="GTMH.UnitTests\**" />
     <None Remove="GTMH.Benchmarking\**" />
     <None Remove="GTMH.UnitTests\**" />
+    <None Include="README.md" Pack="true" PackagePath="\"/>
   </ItemGroup>
 
   <ItemGroup>

@@ -7,6 +7,9 @@
     <Nullable>enable</Nullable>
     <OutputPath>vsbin/$(Configuration)</OutputPath>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>rabbitmq,async,configuration,type safety</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,6 +19,7 @@
     <EmbeddedResource Remove="vsbin\**" />
     <None Remove="GTMH.Rabbit.UnitTests\**" />
     <None Remove="vsbin\**" />
+    <None Include="README.md" Pack="true" PackagePath="\"/>
   </ItemGroup>
 
   <ItemGroup>
