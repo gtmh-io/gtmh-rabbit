@@ -29,17 +29,20 @@ namespace GTMH.Rabbit.RPC.CodeGen
 
   public readonly struct InterfaceDefn
   {
+    public readonly string Visibility;
     public readonly string Name;
     public readonly string Namespace;
     public readonly List<string> Usings;
     public readonly List<MethodDefn> Methods;
-    public InterfaceDefn(string a_Name, string a_NS, List<string> a_Usings, List<MethodDefn> a_Methods)
+    public InterfaceDefn(string a_Visibility, string a_Name, string a_NS, List<string> a_Usings, List<MethodDefn> a_Methods)
     {
+      Visibility=a_Visibility;
       Name = a_Name;
       Namespace = a_NS;
       Usings = a_Usings;
       Methods = a_Methods;
     }
+
 
     internal string GetImplClassName(string a_Suffix)
     {

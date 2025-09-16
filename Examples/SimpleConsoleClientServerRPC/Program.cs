@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 // the interface we're exposing
 [RPCInterface]
-public interface IHelloWorld
+interface IHelloWorld
 {
   [RPCMethod]
   ValueTask<string> IntroducingAsync(string a_Identity);

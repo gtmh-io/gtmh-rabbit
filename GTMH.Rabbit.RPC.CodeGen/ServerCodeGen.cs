@@ -30,7 +30,7 @@ namespace GTMH.Rabbit.RPC.CodeGen
       {
         code.WriteLine($"namespace {a_Defn.Namespace};");
       }
-      code.WriteLine($"public class {implClassName} : RPCServer");
+      code.WriteLine($"{a_Defn.Visibility} class {implClassName} : RPCServer");
       code.WriteLine("{");
       using(code.Indent())
       {
