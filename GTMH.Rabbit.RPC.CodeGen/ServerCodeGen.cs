@@ -130,6 +130,7 @@ namespace GTMH.Rabbit.RPC.CodeGen
     {
       code.WriteLine($"private readonly {a_InterfaceName} m_DispatchTarget;");
       code.WriteLine($"public {a_ClassName}(IRPCFactory a_Factory, {a_InterfaceName} a_DispatchTarget) : this(a_Factory, null, null, a_DispatchTarget) {{}}");
+      code.WriteLine($"public {a_ClassName}(IRPCFactory a_Factory, {a_InterfaceName} a_DispatchTarget, Microsoft.Extensions.Logging.ILogger a_Logger) : this(a_Factory, null, a_Logger, a_DispatchTarget) {{}}");
       code.WriteLine($"public {a_ClassName}(IRPCFactory a_Factory, IRPCTopology a_Env, {a_InterfaceName} a_DispatchTarget) : this(a_Factory, a_Env, null, a_DispatchTarget) {{}}");
       code.WriteLine($"public {a_ClassName}(IRPCFactory a_Factory, IRPCTopology a_Env, Microsoft.Extensions.Logging.ILogger a_Logger, {a_InterfaceName} a_DispatchTarget) : base(a_Factory, a_Env, a_Logger)");
       code.WriteLine("{");
