@@ -1,6 +1,11 @@
-﻿namespace DIRPC.Shared;
+﻿using GTMH.IDL;
 
-public class Class1
+namespace DIRPC.Shared;
+
+[RPCInterface]
+public interface IHelloWorld
 {
-
+  [RPCMethod]
+  ValueTask<string> IntroducingAsync(string a_Identity);
 }
+
