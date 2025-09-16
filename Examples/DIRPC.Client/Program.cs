@@ -35,23 +35,20 @@ try
 {
     Log.Information("Starting client...");
   // do not pass args to application builder
-  var builder = Host.CreateApplicationBuilder(new HostApplicationBuilderSettings
-  {
-    ContentRootPath = AppContext.BaseDirectory,
-    EnvironmentName = environmentName
-  } );
-  builder.AddGTMHConfig(args, RPCClientConfig.GetCommandLineMappings());
+  var builder = Host.CreateApplicationBuilder(new HostApplicationBuilderSettings { ContentRootPath = AppContext.BaseDirectory, EnvironmentName = environmentName } );
 
+  // GTMH sepcific config
+  // have appsettings stuff read
+  builder.AddGTMHConfig(args, RPCClientConfig.GetCommandLineMappings());
   // no decryption
   builder.Services.AddSingleton<IDecryptor, PlainText>();
-
   // setup client config
   builder.AddRPCClientConfig();
   // shared config
   builder.AddRPCSharedConfig();
 
+  // standard DI config
   builder.Services.AddSingleton<Main>();
-
   using var app = builder.Build();
   var main = app.Services.GetRequiredService<Main>();
   await using(main)
