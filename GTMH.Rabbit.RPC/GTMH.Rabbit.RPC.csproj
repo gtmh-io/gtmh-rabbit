@@ -9,7 +9,7 @@
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageTags>rabbitmq,async,rpc,configuration free,reentrant,concurrent,console,client,server</PackageTags>
+    <PackageTags>rabbitmq,async,rpc,configuration free,reentrant,concurrent,console,client,server,protobuf-net</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
