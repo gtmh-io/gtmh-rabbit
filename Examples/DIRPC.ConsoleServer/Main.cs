@@ -22,7 +22,8 @@ public class Main : IAsyncDisposable
   public Main(ILogger<Main> a_Log, IRPCFactory a_RPCFactory)
   {
     this.Log = a_Log;
-    m_ServiceHost = new HelloWorldServiceHost(a_RPCFactory, new ServerImpl(), a_Log);
+    //Log.LogInformation($"Server running against rabbit@{a_RPCFactory.Transport.HostIdentity}");
+    m_ServiceHost = new HelloWorldServiceHost(a_RPCFactory, null, a_Log, new ServerImpl());
   }
 
   public async ValueTask<int> RunAsync()
