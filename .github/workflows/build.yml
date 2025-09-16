@@ -57,3 +57,12 @@ jobs:
       run: |
         docker stop some-rabbit || true
         docker rm some-rabbit || true
+
+    - name: Pack NuGet packages
+      run: dotnet pack --configuration Release --output ./nupkgs
+
+    - name: Publish to NuGet (only on main)
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      run: |
+        dotnet nuget push ./nupkgs/GTMH.*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+
