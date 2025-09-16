@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Tofye.IMQ.Impl
+namespace GTMH.Rabbit.Impl
 {
   public class RabbitStreamSinkFactory<M> : IMessageStreamSinkFactory<M>
   {

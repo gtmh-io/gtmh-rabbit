@@ -2,8 +2,8 @@
 
 using Moq;
 
-using Tofye.IMQ.Impl;
-namespace Tofye.IMQ.UnitTests;
+using GTMH.Rabbit.Impl;
+namespace GTMH.Rabbit.UnitTests;
 
 // https://tunit.dev/
 

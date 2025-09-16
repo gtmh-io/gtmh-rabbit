@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GTMH", "GTMH\GTMH.csproj", "{04C6F92B-0279-4F6E-ABB6-55EADBED4555}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GTMH.Rabbit", "GTMH.Rabbit\GTMH.Rabbit.csproj", "{08E2CD6F-B34B-4B4A-8315-5B831C1B1E73}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,18 @@ Global
 		{04C6F92B-0279-4F6E-ABB6-55EADBED4555}.Release|x64.Build.0 = Release|Any CPU
 		{04C6F92B-0279-4F6E-ABB6-55EADBED4555}.Release|x86.ActiveCfg = Release|Any CPU
 		{04C6F92B-0279-4F6E-ABB6-55EADBED4555}.Release|x86.Build.0 = Release|Any CPU
+		{08E2CD6F-B34B-4B4A-8315-5B831C1B1E73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08E2CD6F-B34B-4B4A-8315-5B831C1B1E73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08E2CD6F-B34B-4B4A-8315-5B831C1B1E73}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{08E2CD6F-B34B-4B4A-8315-5B831C1B1E73}.Debug|x64.Build.0 = Debug|Any CPU
+		{08E2CD6F-B34B-4B4A-8315-5B831C1B1E73}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{08E2CD6F-B34B-4B4A-8315-5B831C1B1E73}.Debug|x86.Build.0 = Debug|Any CPU
+		{08E2CD6F-B34B-4B4A-8315-5B831C1B1E73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08E2CD6F-B34B-4B4A-8315-5B831C1B1E73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08E2CD6F-B34B-4B4A-8315-5B831C1B1E73}.Release|x64.ActiveCfg = Release|Any CPU
+		{08E2CD6F-B34B-4B4A-8315-5B831C1B1E73}.Release|x64.Build.0 = Release|Any CPU
+		{08E2CD6F-B34B-4B4A-8315-5B831C1B1E73}.Release|x86.ActiveCfg = Release|Any CPU
+		{08E2CD6F-B34B-4B4A-8315-5B831C1B1E73}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

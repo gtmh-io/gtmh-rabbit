@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Tofye.IMQ
+namespace GTMH.Rabbit
 {
   public static class Hosted
   {

@@ -9,7 +9,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Tofye.IMQ.Impl
+namespace GTMH.Rabbit.Impl
 {
   public class RabbitStreamSourceFactory<M> : IMessageStreamSourceFactory<M> 
   {

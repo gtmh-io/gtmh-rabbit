@@ -9,9 +9,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
-using Tofye.IMQ.Impl;
+using GTMH.Rabbit.Impl;
 
-namespace Tofye.IMQ.UnitTests
+namespace GTMH.Rabbit.UnitTests
 {
   public class MQUnitTests
   {

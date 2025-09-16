@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
 
-namespace Tofye.IMQ.Impl
+namespace GTMH.Rabbit.Impl
 {
   public class RabbitInstance<M>
   {

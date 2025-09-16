@@ -8,9 +8,9 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using ProtoBuf;
 
-using Tofye.IMQ.Impl;
+using GTMH.Rabbit.Impl;
 
-namespace Tofye.IMQ.UnitTests;
+namespace GTMH.Rabbit.UnitTests;
 
 public class TestMQReEntrant : MQUnitTests
 {

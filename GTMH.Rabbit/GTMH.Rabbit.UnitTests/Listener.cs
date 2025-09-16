@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Tofye.IMQ.UnitTests
+namespace GTMH.Rabbit.UnitTests
 {
   class Listener<T> : IMessageStreamListener<T>
   {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Tofye.IMQ
+namespace GTMH.Rabbit
 {
   public class TransientQueueTopology<M> : IMQTopology<M>
   {

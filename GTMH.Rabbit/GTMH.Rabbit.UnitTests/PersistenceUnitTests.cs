@@ -4,11 +4,11 @@ using System.Text;
 
 using ProtoBuf;
 using Moq;
-using Tofye.IMQ.Impl;
+using GTMH.Rabbit.Impl;
 
 // https://tunit.dev/
 
-namespace Tofye.IMQ.UnitTests
+namespace GTMH.Rabbit.UnitTests
 {
   public class PersistenceUnitTests : MQUnitTests
   {
