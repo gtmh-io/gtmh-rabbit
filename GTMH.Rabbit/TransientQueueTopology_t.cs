@@ -7,6 +7,9 @@ namespace GTMH.Rabbit
   public class TransientQueueTopology_t<M> : IMQTopology<M>
   {
     public bool ConsumerPersists => false;
+    /// <summary>
+    /// This ensures type safety for the exchange and queues connected to it. 
+    /// </summary>
     public virtual string ExchangeName
     {
       get
@@ -19,6 +22,9 @@ namespace GTMH.Rabbit
 
     public virtual string ConsumerQueueName(string? a_RoutingKey)
     {
+      // this would do
+      // return $"{Guid.NewGuid()}"}";
+      // but we prefer to add some context for debugging
       return $"{typeof(M).FullName}::{Environment.MachineName}::{Guid.NewGuid()}::{a_RoutingKey??"*"}";
     }
   }
