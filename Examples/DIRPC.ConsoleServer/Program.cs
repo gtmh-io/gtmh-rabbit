@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 using Serilog;
 
-
-using DIRPC.Client;
+using DIRPC.ConsoleServer;
 
 using GTMH.DI;
 using GTMH.Rabbit.RPC;
@@ -33,7 +33,7 @@ Log.Logger = new LoggerConfiguration()
 
 try
 {
-    Log.Information("Starting client...");
+    Log.Information("Starting server...");
   // do not pass args to application builder
   var builder = Host.CreateApplicationBuilder(new HostApplicationBuilderSettings { ContentRootPath = AppContext.BaseDirectory, EnvironmentName = environmentName } );
 
@@ -42,8 +42,6 @@ try
   builder.AddGTMHConfig(args, RPCClientConfig.GetCommandLineMappings());
   // no decryption
   builder.Services.AddSingleton<IDecryptor, PlainText>();
-  // setup client config
-  builder.AddRPCClientConfig();
   // shared config
   builder.AddRPCSharedConfig();
 
@@ -67,4 +65,3 @@ finally
   Log.Information("Application shutting down");
   Log.CloseAndFlush();
 }
-

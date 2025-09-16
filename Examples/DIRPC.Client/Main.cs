@@ -22,12 +22,11 @@ public class Main : IAsyncDisposable
   }
 
 
-  public async ValueTask<int> RunAsync(string[] args)
+  public async ValueTask<int> RunAsync()
   {
     try
     {
       await m_Client.Connect();
-      Log.LogInformation($"RPC call...");
       var result = await m_Client.IntroducingAsync("client");
       Log.LogInformation($"RPC pleasantries... {result}");
     }
