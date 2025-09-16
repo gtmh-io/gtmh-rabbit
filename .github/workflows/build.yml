@@ -61,6 +61,33 @@ jobs:
     - name: Pack NuGet packages
       run: dotnet pack --configuration Release --output ./nupkgs
 
+    # Only sign and publish on main branch pushes
+    - name: Setup signing certificate
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      run: |
+        echo "${{ secrets.GTMH_SIGNING_CERT }}" | base64 -d > gtmh.io.pfx
+
+    - name: Sign packages
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      run: |
+        for package in ./nupkgs/GTMH.*.nupkg; do
+          echo "Signing $package..."
+          dotnet nuget sign "$package" \
+            --certificate-path gtmh.io.pfx \
+            --certificate-password "${{ secrets.GTMH_CERT_PASSWORD }}" \
+            --timestamper http://timestamp.digicert.com \
+            --overwrite
+        done
+
+    - name: Verify signatures
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      run: |
+        for package in ./nupkgs/GTMH.*.nupkg; do
+          echo "Verifying $package..."
+          dotnet nuget verify "$package" --all
+        done
+
+
     - name: Publish to NuGet (only on main)
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
       run: |
