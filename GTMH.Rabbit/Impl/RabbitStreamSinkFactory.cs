@@ -11,9 +11,9 @@ namespace GTMH.Rabbit.Impl
   public class RabbitStreamSinkFactory<M> : IMessageStreamSinkFactory<M>
   {
     RabbitInstance<M> m_Rabbit; 
-    public RabbitStreamSinkFactory(IRabbitFactory a_Rabbit, IMQTopology<M> a_Topology, ILogger<RabbitStreamSinkFactory<M>> a_Logger)
+    public RabbitStreamSinkFactory(IRabbitFactory a_Rabbit, IMQTopology<M> a_Topology, ILogger<RabbitStreamSinkFactory<M>> ? a_Logger = null)
     {
-      m_Rabbit = new RabbitInstance<M>(a_Rabbit, a_Topology, a_Logger);
+      m_Rabbit = new RabbitInstance<M>(a_Rabbit, a_Topology, a_Logger??new NullStreamFactoryLogger());
     }
 
     public async ValueTask<IMessageStreamSink<M>> CreateSink(CancellationToken a_Cancel = default)
@@ -42,6 +42,12 @@ namespace GTMH.Rabbit.Impl
         var payload = PBuffer.Create(a_Msg).Data;
         await Connection.Channel.BasicPublishAsync(Connection.Topology.ExchangeName, a_RoutingKey, mandatory:false, payload, a_Cancel);
       }
+    }
+    class NullStreamFactoryLogger : ILogger<RabbitStreamSinkFactory<M>>
+    {
+      public IDisposable? BeginScope<TState>(TState state) where TState : notnull =>null;
+      public bool IsEnabled(LogLevel logLevel) => false;
+      public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter) { }
     }
   }
 }

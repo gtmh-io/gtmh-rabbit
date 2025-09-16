@@ -4,7 +4,7 @@ using System.Text;
 
 namespace GTMH.Rabbit
 {
-  public class TransientQueueTopology<M> : IMQTopology<M>
+  public class TransientQueueTopology_t<M> : IMQTopology<M>
   {
     public bool ConsumerPersists => false;
     public virtual string ExchangeName
@@ -21,5 +21,10 @@ namespace GTMH.Rabbit
     {
       return $"{typeof(M).FullName}::{Environment.MachineName}::{Guid.NewGuid()}::{a_RoutingKey??"*"}";
     }
+  }
+  public static class TransientQueueTopology
+  {
+    public static IMQTopology<M> Create<M>() => new TransientQueueTopology_t<M>();
+
   }
 }

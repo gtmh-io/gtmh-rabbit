@@ -16,10 +16,11 @@ namespace GTMH.Rabbit.Impl
     RabbitInstance<M> m_Rabbit;
     private readonly ILogger<RabbitStreamSourceFactory<M>> Log;
 
-    public RabbitStreamSourceFactory(IRabbitFactory a_Rabbit, IMQTopology<M> a_Topology, ILogger<RabbitStreamSourceFactory<M>> a_Logger)
+    public RabbitStreamSourceFactory(IRabbitFactory a_Rabbit, IMQTopology<M> a_Topology, ILogger<RabbitStreamSourceFactory<M>> ? a_Logger = null)
     {
-      m_Rabbit = new RabbitInstance<M>(a_Rabbit, a_Topology, a_Logger);
-      this.Log=a_Logger;
+      var logger = a_Logger ?? new NullStreamFactoryLogger();
+      m_Rabbit = new RabbitInstance<M>(a_Rabbit, a_Topology, logger);
+      this.Log=logger;
     }
 
     public async ValueTask<IMessageStreamSource<M>> CreateSource(CancellationToken a_Cancel = default)
@@ -92,6 +93,12 @@ namespace GTMH.Rabbit.Impl
           await Connection.Channel.BasicCancelAsync(consumerTag);
         }
       }
+    }
+    class NullStreamFactoryLogger : ILogger<RabbitStreamSourceFactory<M>>
+    {
+      public IDisposable? BeginScope<TState>(TState state) where TState : notnull=>null;
+      public bool IsEnabled(LogLevel logLevel)=>false;
+      public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter) { }
     }
   }
 }

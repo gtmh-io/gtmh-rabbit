@@ -12,7 +12,7 @@ namespace GTMH.Rabbit.UnitTests
 {
   public class PersistenceUnitTests : MQUnitTests
   {
-    class UTTransientQueueTopology<M> : TransientQueueTopology<M>
+    class UTTransientQueueTopology<M> : TransientQueueTopology_t<M>
     {
       readonly string Scope = Guid.NewGuid().ToString();
       public override string ExchangeName => $"{Scope}::{base.ExchangeName}";
