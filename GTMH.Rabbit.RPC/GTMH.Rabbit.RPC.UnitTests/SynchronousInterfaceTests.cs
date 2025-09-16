@@ -33,7 +33,7 @@ namespace GTMH.Rabbit.RPC.UnitTests
       Mock<ISynchronousInterface> serverImpl = new ();
       serverImpl.Setup(_=>_.TestMethod(It.IsAny<string>())).Returns( (string arg)=>$"{arg}::{id}" );
       UTTopology topology = new();
-      var serverHost = new SynchronousInterfaceDispatch(RPCFactory.Object, topology, Logger, serverImpl.Object); 
+      var serverHost = new SynchronousInterfaceServiceHost(RPCFactory.Object, topology, Logger, serverImpl.Object); 
       var server = await serverHost.Publish();
       await using(server)
       {
@@ -58,7 +58,7 @@ namespace GTMH.Rabbit.RPC.UnitTests
       Mock<ISynchronousInterface> serverImpl = new ();
       serverImpl.Setup(_=>_.TestMethod(It.IsAny<string>())).Returns( (string arg)=>$"{arg}::{id}" );
       UTTopology topology = new();
-      var serverHost = new SynchronousInterfaceDispatch(RPCFactory.Object, topology, Logger, serverImpl.Object); 
+      var serverHost = new SynchronousInterfaceServiceHost(RPCFactory.Object, topology, Logger, serverImpl.Object); 
       var server = await serverHost.Publish();
       await using(server)
       {
@@ -83,7 +83,7 @@ namespace GTMH.Rabbit.RPC.UnitTests
       Mock<ISynchronousInterface> serverImpl = new ();
       serverImpl.Setup(_=>_.TestMethod(It.IsAny<string>())).Throws<Exception>();
       UTTopology topology = new();
-      var serverHost = new SynchronousInterfaceDispatch(RPCFactory.Object, topology, Logger, serverImpl.Object); 
+      var serverHost = new SynchronousInterfaceServiceHost(RPCFactory.Object, topology, Logger, serverImpl.Object); 
       var server = await serverHost.Publish();
       await using(server)
       {
@@ -101,7 +101,7 @@ namespace GTMH.Rabbit.RPC.UnitTests
       Mock<ISynchronousInterface> serverImpl = new ();
       serverImpl.Setup(_=>_.TestMethod(It.IsAny<string>())).Throws<Exception>();
       UTTopology topology = new();
-      var serverHost = new SynchronousInterfaceDispatch(RPCFactory.Object, topology, Logger, serverImpl.Object); 
+      var serverHost = new SynchronousInterfaceServiceHost(RPCFactory.Object, topology, Logger, serverImpl.Object); 
       var server = await serverHost.Publish();
       await using(server)
       {
@@ -123,7 +123,7 @@ namespace GTMH.Rabbit.RPC.UnitTests
         return "sorry";
       });
       UTTopology topology = new();
-      var serverHost = new SynchronousInterfaceDispatch(RPCFactory.Object, topology, Logger, serverImpl.Object); 
+      var serverHost = new SynchronousInterfaceServiceHost(RPCFactory.Object, topology, Logger, serverImpl.Object); 
       var server = await serverHost.Publish();
       await using(server)
       {
@@ -154,7 +154,7 @@ namespace GTMH.Rabbit.RPC.UnitTests
         return "sorry";
       });
       UTTopology topology = new();
-      var serverHost = new SynchronousInterfaceDispatch(RPCFactory.Object, topology, Logger, serverImpl.Object); 
+      var serverHost = new SynchronousInterfaceServiceHost(RPCFactory.Object, topology, Logger, serverImpl.Object); 
       var server = await serverHost.Publish();
       await using(server)
       {

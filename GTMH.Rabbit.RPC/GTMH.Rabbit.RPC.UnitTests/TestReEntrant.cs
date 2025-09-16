@@ -19,12 +19,12 @@ namespace GTMH.Rabbit.RPC.UnitTests
     {
       var topology = new UTTopology();
       var serverAImpl = new REServerAImpl(RPCFactory.Object, topology, Logger);
-      var dispatchA = new REServerADispatch(RPCFactory.Object, topology, Logger, serverAImpl);
+      var dispatchA = new REServerAServiceHost(RPCFactory.Object, topology, Logger, serverAImpl);
       var serverA = await dispatchA.Publish();
       await using(serverA)
       {
         var serverBImpl = new REServerBImplLateConstruction(RPCFactory.Object, topology, Logger);
-        var dispatchB = new REServerBDispatch(RPCFactory.Object, topology, Logger, serverBImpl);
+        var dispatchB = new REServerBServiceHost(RPCFactory.Object, topology, Logger, serverBImpl);
         var serverB = await dispatchB.Publish();
         await using(serverB)
         {
@@ -43,12 +43,12 @@ namespace GTMH.Rabbit.RPC.UnitTests
     {
       var topology = new UTTopology();
       var serverAImpl = new REServerAImpl(RPCFactory.Object, topology, Logger);
-      var dispatchA = new REServerADispatch(RPCFactory.Object, topology, Logger, serverAImpl);
+      var dispatchA = new REServerAServiceHost(RPCFactory.Object, topology, Logger, serverAImpl);
       var serverA = await dispatchA.Publish();
       await using(serverA)
       {
         var serverBImpl = new REServerBImplLateConstruction(RPCFactory.Object, topology, Logger);
-        var dispatchB = new REServerBDispatch(RPCFactory.Object, topology, Logger, serverBImpl);
+        var dispatchB = new REServerBServiceHost(RPCFactory.Object, topology, Logger, serverBImpl);
         var serverB = await dispatchB.Publish();
         await using(serverB)
         {
@@ -67,12 +67,12 @@ namespace GTMH.Rabbit.RPC.UnitTests
     {
       var topology = new UTTopology();
       var serverAImpl = new REServerAImpl(RPCFactory.Object, topology, Logger);
-      var dispatchA = new REServerADispatch(RPCFactory.Object, topology, Logger, serverAImpl);
+      var dispatchA = new REServerAServiceHost(RPCFactory.Object, topology, Logger, serverAImpl);
       var serverA = await dispatchA.Publish();
       await using(serverA)
       {
         var serverBImpl = new REServerBImplLateConstruction(RPCFactory.Object, topology, Logger);
-        var dispatchB = new REServerBDispatch(RPCFactory.Object, topology, Logger, serverBImpl);
+        var dispatchB = new REServerBServiceHost(RPCFactory.Object, topology, Logger, serverBImpl);
         var serverB = await dispatchB.Publish();
         await using(serverB)
         {
@@ -91,7 +91,7 @@ namespace GTMH.Rabbit.RPC.UnitTests
     {
       var topology = new UTTopology();
       var serverAImpl = new REServerAImpl(RPCFactory.Object, topology, Logger);
-      var dispatchA = new REServerADispatch(RPCFactory.Object, topology, Logger, serverAImpl);
+      var dispatchA = new REServerAServiceHost(RPCFactory.Object, topology, Logger, serverAImpl);
       var serverA = await dispatchA.Publish();
       await using(serverA)
       {
@@ -99,7 +99,7 @@ namespace GTMH.Rabbit.RPC.UnitTests
         await serverBImpl.ConnectA();
         await using(serverBImpl)
         {
-          var dispatchB = new REServerBDispatch(RPCFactory.Object, topology, Logger, serverBImpl);
+          var dispatchB = new REServerBServiceHost(RPCFactory.Object, topology, Logger, serverBImpl);
           var serverB = await dispatchB.Publish();
           await using(serverB)
           {

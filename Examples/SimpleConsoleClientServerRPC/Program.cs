@@ -34,7 +34,7 @@ public static class Program
   private static async ValueTask RunServer(IRPCFactory rabbit)
   {
     Console.WriteLine($"Running as server@{rabbit.Transport.HostIdentity}, hit enter to quit...");
-    var serverHost = new HelloWorldDispatch(rabbit, new ServerImpl());
+    var serverHost = new HelloWorldServiceHost(rabbit, new ServerImpl());
     var server = await serverHost.Publish();
     await using(server)
     {

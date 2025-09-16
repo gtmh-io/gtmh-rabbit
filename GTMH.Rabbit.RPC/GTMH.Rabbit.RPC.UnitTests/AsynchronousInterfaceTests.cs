@@ -34,7 +34,7 @@ namespace GTMH.Rabbit.RPC.UnitTests
       serverImpl.Setup(_=>_.TaskTestMethodAsync(It.IsAny<string>())).Returns( (string arg)=>Task.FromResult($"{arg}::{id}") );
       serverImpl.Setup(_=>_.ValueTaskTestMethodAsync(It.IsAny<string>())).Returns( (string arg)=>ValueTask.FromResult($"{arg}::{id}") );
       UTTopology topology = new();
-      var serverHost = new AsynchronousInterfaceDispatch(RPCFactory.Object, topology, Logger, serverImpl.Object); 
+      var serverHost = new AsynchronousInterfaceServiceHost(RPCFactory.Object, topology, Logger, serverImpl.Object); 
       var server = await serverHost.Publish();
       await using(server)
       {

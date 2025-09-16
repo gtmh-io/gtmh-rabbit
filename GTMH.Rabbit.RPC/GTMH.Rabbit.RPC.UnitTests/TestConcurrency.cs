@@ -40,7 +40,7 @@ namespace GTMH.Rabbit.RPC.UnitTests
     {
       var topology = new UTTopology();
       var serverImpl = new TCServerImpl();
-      var dispatch = new TCServerDispatch(RPCFactory.Object, topology, Logger, serverImpl);
+      var dispatch = new TCServerServiceHost(RPCFactory.Object, topology, Logger, serverImpl);
       var server = await dispatch.Publish();
       int NumConcurrent = 10;
       int NumCalls = 10;
@@ -86,7 +86,7 @@ namespace GTMH.Rabbit.RPC.UnitTests
       var topology = new UTTopology();
       var serverImpl = new TCServerImpl();
       RPCFactory.Setup(_=>_.ServerMaxConcurrency).Returns(Limit);
-      var dispatch = new TCServerDispatch(RPCFactory.Object, topology, Logger, serverImpl);
+      var dispatch = new TCServerServiceHost(RPCFactory.Object, topology, Logger, serverImpl);
       var server = await dispatch.Publish();
       int NumConcurrent = 10;
       int NumCalls = 10;
