@@ -27,11 +27,11 @@ namespace GTMH.Rabbit.RPC
     public IRPCClientConfig ClientConfig { get; }
     protected readonly string ClientId = Guid.NewGuid().ToString();
     internal readonly string ? MsgTTL;
-    public RPCClient(IRPCFactory a_Factory, IRPCTopology a_Topology, ILogger a_Logger, IRPCClientConfig ? a_Config = null)
+    public RPCClient(IRPCFactory a_Factory, IRPCTopology ? a_Topology, ILogger ? a_Logger, IRPCClientConfig ? a_Config)
     {
-      this.Topology = a_Topology;
+      this.Topology = a_Topology ?? new BasicTopology();
       m_TransportRabbit = a_Factory.Transport.Create();
-      Log = a_Logger;
+      Log = a_Logger ?? new NullLogger();
       ClientConfig = a_Config ?? new RPCClientConfig();
       if(ClientConfig.CallTimeout >= 0)
       {

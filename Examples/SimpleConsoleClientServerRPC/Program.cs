@@ -56,7 +56,7 @@ public static class Program
   private static async ValueTask RunClient(string identity, IRPCFactory rabbit)
   {
     Console.WriteLine("Running as client...");
-    var client = new HelloWorldClient(rabbit, new BasicTopology(), new NullLogger(), null );
+    var client = new HelloWorldClient(rabbit);
     await client.Connect();
     var result = await client.IntroducingAsync(identity);
     Console.WriteLine($"RPC pleasantries... {result}");

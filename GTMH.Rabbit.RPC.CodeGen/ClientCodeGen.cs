@@ -36,7 +36,7 @@ namespace GTMH.Rabbit.RPC.CodeGen
       using(code.Indent())
       {
         code.WriteLine($"public override string InterfaceType=>\"{a_Defn.Namespace}.{a_Defn.Name}\";");
-        WriteClientConstructor(code, implClassName);
+        WriteClientConstructors(code, implClassName);
         // implementation
         foreach(var method in a_Defn.Methods)
         {
@@ -56,9 +56,12 @@ namespace GTMH.Rabbit.RPC.CodeGen
       compiler.AddSource($"{implClassName}.g.cs", code.ToString());
     }
 
-    public static void WriteClientConstructor(Code code, string implClassName)
+    public static void WriteClientConstructors(Code code, string implClassName)
     {
-      code.WriteLine($"public {implClassName}(IRPCFactory a_Factory, IRPCTopology a_Topology, Microsoft.Extensions.Logging.ILogger a_Logger, IRPCClientConfig ? a_Config) : base(a_Factory, a_Topology, a_Logger, a_Config) {{ }}");
+      code.WriteLine($"public {implClassName}(IRPCFactory a_Factory, IRPCTopology a_Topology, Microsoft.Extensions.Logging.ILogger a_Logger, IRPCClientConfig ? a_Config=null) : base(a_Factory, a_Topology, a_Logger, a_Config) {{ }}");
+      code.WriteLine($"public {implClassName}(IRPCFactory a_Factory, Microsoft.Extensions.Logging.ILogger a_Logger, IRPCClientConfig ? a_Config) : base(a_Factory, null, a_Logger, a_Config) {{ }}");
+      code.WriteLine($"public {implClassName}(IRPCFactory a_Factory, Microsoft.Extensions.Logging.ILogger a_Logger) : base(a_Factory, null, a_Logger, null) {{ }}");
+      code.WriteLine($"public {implClassName}(IRPCFactory a_Factory) : base(a_Factory, null, null, null) {{ }}");
     }
     public static void WriteAsyncMethodImpl(Code code, MethodDefn a_Method, string a_Type)
     {
