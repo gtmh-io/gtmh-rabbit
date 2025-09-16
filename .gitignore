@@ -55,6 +55,7 @@ nunit-*.xml
 
 # i prefer vs to output to a specific directory
 vsbin
+tmp
 
 # hidden files
 .*
