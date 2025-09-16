@@ -79,13 +79,14 @@ jobs:
             --overwrite
         done
 
-    - name: Verify signatures
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      run: |
-        for package in ./nupkgs/GTMH.*.nupkg; do
-          echo "Verifying $package..."
-          dotnet nuget verify "$package" --all
-        done
+# don't whilst we are self signed
+#    - name: Verify signatures
+#      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+#      run: |
+#        for package in ./nupkgs/GTMH.*.nupkg; do
+#          echo "Verifying $package..."
+#          dotnet nuget verify "$package" --all
+#        done
 
 
     - name: Publish to NuGet (only on main)
