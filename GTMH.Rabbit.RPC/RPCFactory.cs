@@ -25,5 +25,11 @@ namespace GTMH.Rabbit.RPC
       ServerQueueTTL = a_Config.Value.ServerQueueTTL;
       ServerMaxConcurrency = a_Config.Value.ServerMaxConcurrency;
     }
+    public RPCFactory(IRabbitFactory a_Transport, int a_ServerQueueTTL = RPCConfig.DefaultServerQueueTTL, ushort a_ServerMaxConcurrency = RPCConfig.DefaultServerMaxConcurrency)
+    {
+      Transport = a_Transport;
+      ServerQueueTTL = a_ServerQueueTTL;
+      ServerMaxConcurrency = a_ServerMaxConcurrency;
+    }
   }
 }

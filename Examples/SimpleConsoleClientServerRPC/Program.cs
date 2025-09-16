@@ -6,6 +6,7 @@ using RabbitMQ.Client;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
+// the interface we're exposing
 [RPCInterface]
 public interface IHelloWorld
 {
@@ -13,33 +14,16 @@ public interface IHelloWorld
   ValueTask<string> IntroducingAsync(string a_Identity);
 }
 
-public class ServerImpl : IHelloWorld
+// implementation of the server
+public class ServerImpl(string a_Identity) : IHelloWorld
 {
-  public readonly string Identity;
-
-  public ServerImpl(string a_Identity)
-  {
-    this.Identity = a_Identity;
-  }
-  public ValueTask<string> IntroducingAsync(string a_Identity)
-  {
-    return ValueTask.FromResult($"Hello {a_Identity}, my name is {Identity}");
-  }
-}
-public class HostOnlyFactory(string a_HostName) : IRabbitFactory
-{
-  public string HostIdentity { get; } = a_HostName;
-  public IConnectionFactory Create()=>new ConnectionFactory { HostName = HostIdentity };
+  public readonly string Identity = a_Identity;
+  public ValueTask<string> IntroducingAsync(string a_Identity) => ValueTask.FromResult($"Hello {a_Identity}, my name is {Identity}");
 }
 
-public class NullLogger : ILogger
-{
-  public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
-  public bool IsEnabled(LogLevel logLevel) => false;
-  public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter) { }
-}
 public static class Program
 {
+  // will run as either client or server
   public static async Task Main(string [] args)
   {
     var identity = args.FirstOrDefault(arg => arg.StartsWith("--identity="))?.Split('=')[1] ?? "roger";
@@ -77,4 +61,19 @@ public static class Program
     var result = await client.IntroducingAsync(identity);
     Console.WriteLine($"RPC pleasantries... {result}");
   }
+}
+
+// Because we're not using dependency injection we need this
+public class HostOnlyFactory(string a_HostName) : IRabbitFactory
+{
+  public string HostIdentity { get; } = a_HostName;
+  public IConnectionFactory Create()=>new ConnectionFactory { HostName = HostIdentity };
+}
+
+// Because we're not using dependency injection we need this
+public class NullLogger : ILogger
+{
+  public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
+  public bool IsEnabled(LogLevel logLevel) => false;
+  public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter) { }
 }
