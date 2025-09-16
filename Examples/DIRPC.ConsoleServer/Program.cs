@@ -1,5 +1,4 @@
-﻿
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -44,6 +43,12 @@ try
   builder.Services.AddSingleton<IDecryptor, PlainText>();
   // shared config
   builder.AddRPCSharedConfig();
+
+  // configure serilog
+  builder.Services.AddSerilog((services, lc) => lc
+    .ReadFrom.Configuration(builder.Configuration)
+    .ReadFrom.Services(services)
+    .Enrich.FromLogContext());
 
   // standard DI config
   builder.Services.AddSingleton<Main>();

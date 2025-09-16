@@ -47,6 +47,12 @@ try
   // shared config
   builder.AddRPCSharedConfig();
 
+  // configure serilog
+  builder.Services.AddSerilog((services, lc) => lc
+    .ReadFrom.Configuration(builder.Configuration)
+    .ReadFrom.Services(services)
+    .Enrich.FromLogContext());
+
   // standard DI config
   builder.Services.AddSingleton<Main>();
   using var app = builder.Build();
