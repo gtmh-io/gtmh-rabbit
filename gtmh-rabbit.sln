@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GTMH.Rabbit", "GTMH.Rabbit\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GTMH.RabbitUnitTests", "GTMH.Rabbit\GTMH.Rabbit.UnitTests\GTMH.RabbitUnitTests.csproj", "{D6953D6C-B0C9-924B-ED03-0F6367ADDC56}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GTMH.Rabbit.RPC.CodeGen", "GTMH.Rabbit.RPC.CodeGen\GTMH.Rabbit.RPC.CodeGen.csproj", "{EBA9D8C5-1E17-4FE1-B9FC-86618CA2D889}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,18 @@ Global
 		{D6953D6C-B0C9-924B-ED03-0F6367ADDC56}.Release|x64.Build.0 = Release|Any CPU
 		{D6953D6C-B0C9-924B-ED03-0F6367ADDC56}.Release|x86.ActiveCfg = Release|Any CPU
 		{D6953D6C-B0C9-924B-ED03-0F6367ADDC56}.Release|x86.Build.0 = Release|Any CPU
+		{EBA9D8C5-1E17-4FE1-B9FC-86618CA2D889}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBA9D8C5-1E17-4FE1-B9FC-86618CA2D889}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBA9D8C5-1E17-4FE1-B9FC-86618CA2D889}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{EBA9D8C5-1E17-4FE1-B9FC-86618CA2D889}.Debug|x64.Build.0 = Debug|Any CPU
+		{EBA9D8C5-1E17-4FE1-B9FC-86618CA2D889}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{EBA9D8C5-1E17-4FE1-B9FC-86618CA2D889}.Debug|x86.Build.0 = Debug|Any CPU
+		{EBA9D8C5-1E17-4FE1-B9FC-86618CA2D889}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBA9D8C5-1E17-4FE1-B9FC-86618CA2D889}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EBA9D8C5-1E17-4FE1-B9FC-86618CA2D889}.Release|x64.ActiveCfg = Release|Any CPU
+		{EBA9D8C5-1E17-4FE1-B9FC-86618CA2D889}.Release|x64.Build.0 = Release|Any CPU
+		{EBA9D8C5-1E17-4FE1-B9FC-86618CA2D889}.Release|x86.ActiveCfg = Release|Any CPU
+		{EBA9D8C5-1E17-4FE1-B9FC-86618CA2D889}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
