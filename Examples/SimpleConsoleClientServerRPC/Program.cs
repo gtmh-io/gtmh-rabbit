@@ -16,7 +16,7 @@ interface IHelloWorld
 // implementation of the server
 public class ServerImpl : IHelloWorld
 {
-  public ValueTask<string> IntroducingAsync(string a_Identity) => ValueTask.FromResult($"Hello {a_Identity}, I am a Server");
+  public ValueTask<string> IntroducingAsync(string a_Identity) => ValueTask.FromResult($"Hello {a_Identity}, I am a GTMH.RPC.HelloWorldServer");
 }
 
 public static class Program

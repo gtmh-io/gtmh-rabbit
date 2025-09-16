@@ -18,9 +18,9 @@ public class Main : IAsyncDisposable
   public Main(ILogger<Main> a_Log, IRPCFactory a_RPCFactory, IOptions<RPCClientConfig> a_ClientConfig)
   {
     this.Log = a_Log;
+    Log.LogInformation($"Client running against rabbit@{a_RPCFactory.Transport.HostIdentity}");
     m_Client=new HelloWorldClient(a_RPCFactory, a_Log, a_ClientConfig.Value);
   }
-
 
   public async ValueTask<int> RunAsync()
   {

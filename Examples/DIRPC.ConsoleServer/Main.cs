@@ -14,7 +14,7 @@ public class Main : IAsyncDisposable
 {
   public class ServerImpl : IHelloWorld
   {
-    public ValueTask<string> IntroducingAsync(string a_Identity) => ValueTask.FromResult($"Hello {a_Identity}, I am a Server");
+    public ValueTask<string> IntroducingAsync(string a_Identity) => ValueTask.FromResult($"Hello {a_Identity}, I am a GTMH.RPC.HelloWorldServer");
   }
 
   private readonly ILogger<Main> Log;
@@ -23,7 +23,6 @@ public class Main : IAsyncDisposable
   {
     this.Log = a_Log;
     Log.LogInformation($"Server running against rabbit@{a_RPCFactory.Transport.HostIdentity}");
-    //m_ServiceHost = new HelloWorldServiceHost(a_RPCFactory, null, a_Log, new ServerImpl());
     m_ServiceHost = new HelloWorldServiceHost(a_RPCFactory, new ServerImpl(), a_Log);
   }
 
