@@ -12,6 +12,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="vsbin\**" />
+    <EmbeddedResource Remove="vsbin\**" />
+    <None Remove="vsbin\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\GTMH.Rabbit.RPC.CodeGen\GTMH.Rabbit.RPC.CodeGen.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
     <ProjectReference Include="..\..\GTMH.Rabbit.RPC\GTMH.Rabbit.RPC.csproj" />
   </ItemGroup>

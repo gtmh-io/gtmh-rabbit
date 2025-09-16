@@ -22,14 +22,14 @@ namespace GTMH.Rabbit.RPC
     private readonly int QueueTTL;
     private readonly ushort MaxConcurrency;
 
-    public RPCServer(IRPCFactory a_RPCEnv, IRPCTopology a_Topology, ILogger a_Log)
+    public RPCServer(IRPCFactory a_RPCEnv, IRPCTopology ? a_Topology, ILogger ? a_Log)
     {
       this.m_Rabbit=a_RPCEnv.Transport.Create();
       this.QueueTTL = a_RPCEnv.ServerQueueTTL;
       this.MaxConcurrency = a_RPCEnv.ServerMaxConcurrency;
-      this.Topology = a_Topology;
-      this.Log=a_Log;
-      QUEUE_NAME=a_Topology.QueueName(InterfaceType);
+      this.Topology = a_Topology ?? new BasicTopology();
+      this.Log=a_Log??new NullLogger();
+      QUEUE_NAME=Topology.QueueName(InterfaceType);
       if ( Log.IsEnabled(LogLevel.Trace)) Log.LogTrace($"RPCServer<{InterfaceType}>[Queue={QUEUE_NAME} Rabbit={a_RPCEnv.Transport.HostIdentity} TTL={QueueTTL} MaxConcurrency={MaxConcurrency}]");
     }
 

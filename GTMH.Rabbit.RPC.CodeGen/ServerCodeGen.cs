@@ -36,7 +36,7 @@ namespace GTMH.Rabbit.RPC.CodeGen
       {
         // implementation
         code.WriteLine($"public override string InterfaceType=>\"{a_Defn.Namespace}.{a_Defn.Name}\";");
-        WriteServerConstructor(code, implClassName, a_Defn.Name);
+        WriteConstructors(code, implClassName, a_Defn.Name);
         WriteDispatchMethod(code, a_Defn);
       }
       code.WriteLine("}");
@@ -126,9 +126,11 @@ namespace GTMH.Rabbit.RPC.CodeGen
       code.WriteLine("}");
     }
 
-    private static void WriteServerConstructor(Code code, string a_ClassName, string a_InterfaceName)
+    private static void WriteConstructors(Code code, string a_ClassName, string a_InterfaceName)
     {
       code.WriteLine($"private readonly {a_InterfaceName} m_DispatchTarget;");
+      code.WriteLine($"public {a_ClassName}(IRPCFactory a_Factory, {a_InterfaceName} a_DispatchTarget) : this(a_Factory, null, null, a_DispatchTarget) {{}}");
+      code.WriteLine($"public {a_ClassName}(IRPCFactory a_Factory, IRPCTopology a_Env, {a_InterfaceName} a_DispatchTarget) : this(a_Factory, a_Env, null, a_DispatchTarget) {{}}");
       code.WriteLine($"public {a_ClassName}(IRPCFactory a_Factory, IRPCTopology a_Env, Microsoft.Extensions.Logging.ILogger a_Logger, {a_InterfaceName} a_DispatchTarget) : base(a_Factory, a_Env, a_Logger)");
       code.WriteLine("{");
       using(code.Indent())

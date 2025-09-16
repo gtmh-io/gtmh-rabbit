@@ -23,12 +23,12 @@ public class ServerImpl(string a_Identity) : IHelloWorld
 
 public static class Program
 {
-  // will run as either client or server
+  // will run as either client or server depending on value of --runas=type
   public static async Task Main(string [] args)
   {
-    var identity = args.FirstOrDefault(arg => arg.StartsWith("--identity="))?.Split('=')[1] ?? "roger";
     var rabbit = args.FirstOrDefault(arg => arg.StartsWith("--rabbit="))?.Split('=')[1] ?? "localhost";
     var runas = (args.FirstOrDefault(arg => arg.StartsWith("--runas="))?.Split('=')[1] ?? "client").ToLower();
+    var identity = args.FirstOrDefault(arg => arg.StartsWith("--identity="))?.Split('=')[1] ?? $"{runas}.roger";
 
     Console.WriteLine($"I am {identity} connecting to Rabbit@{rabbit}");
     if(runas == "client")
@@ -45,7 +45,7 @@ public static class Program
   {
     Console.WriteLine("Running as server, hit enter to quit...");
     var serverImpl = new ServerImpl(identity);
-    var serverHost = new HelloWorldDispatch(rabbit, new BasicTopology(), new NullLogger(), serverImpl);
+    var serverHost = new HelloWorldDispatch(rabbit, serverImpl);
     var server = await serverHost.Publish();
     await using(server)
     {
@@ -68,12 +68,4 @@ public class HostOnlyFactory(string a_HostName) : IRabbitFactory
 {
   public string HostIdentity { get; } = a_HostName;
   public IConnectionFactory Create()=>new ConnectionFactory { HostName = HostIdentity };
-}
-
-// Because we're not using dependency injection we need this
-public class NullLogger : ILogger
-{
-  public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
-  public bool IsEnabled(LogLevel logLevel) => false;
-  public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter) { }
 }
