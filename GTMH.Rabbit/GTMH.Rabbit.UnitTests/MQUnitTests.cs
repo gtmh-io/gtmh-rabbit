@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Text;
 
 using GTMH.Rabbit.Impl;
+using GTMH.Security;
 
 namespace GTMH.Rabbit.UnitTests
 {

@@ -7,6 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+using GTMH.Security;
+
 namespace GTMH.Rabbit
 {
   public interface IRabbitFactory

@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using GTMH.Security;
+
+using Microsoft.Extensions.Logging;
 
 using Moq;
 

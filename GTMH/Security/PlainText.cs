@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace GTMH.Rabbit
+namespace GTMH.Security
 {
   public class PlainText : IDecryptor
   {

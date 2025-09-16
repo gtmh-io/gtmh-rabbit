@@ -7,6 +7,8 @@ using Serilog;
 
 using DIRPC.Client;
 
+using GTMH.DI;
+using GTMH.Rabbit.RPC;
 
 var environmentName = args.FirstOrDefault(arg => arg.StartsWith("--environment="))?.Split('=')[1] ?? Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT");
 #if DEBUG
@@ -37,6 +39,7 @@ try
     ContentRootPath = AppContext.BaseDirectory,
     EnvironmentName = environmentName
   } );
+  builder.AddGTMHConfig(args, RPCClientConfig.GetCommandLineMappings());
 
   builder.Services.AddSingleton<Main>();
 
