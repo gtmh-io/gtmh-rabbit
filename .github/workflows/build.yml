@@ -17,6 +17,31 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 10.0.x
+    - name: Start RabbitMQ with health check
+      run: |
+        docker pull rabbitmq:3-management
+        docker run -d \
+          --hostname my-rabbit \
+          --name some-rabbit \
+          -p 15672:15672 \
+          -p 5672:5672 \
+          --health-cmd="rabbitmq-diagnostics -q ping" \
+          --health-interval=10s \
+          --health-timeout=5s \
+          --health-retries=5 \
+          rabbitmq:3-management
+        
+        # Wait for container to be healthy
+        echo "Waiting for RabbitMQ to be healthy..."
+        until [ "$(docker inspect -f '{{.State.Health.Status}}' some-rabbit)" == "healthy" ]; do
+          echo "Waiting..."
+          sleep 2
+        done
+        echo "RabbitMQ is healthy and ready!"
+    
+    - name: Show RabbitMQ logs (for debugging)
+      run: docker logs some-rabbit
+
     
     - name: Restore dependencies
       run: dotnet restore
@@ -26,3 +51,9 @@ jobs:
     
     - name: Run tests
       run: dotnet test --no-build --verbosity normal
+
+    - name: Cleanup
+      if: always()
+      run: |
+        docker stop some-rabbit || true
+        docker rm some-rabbit || true
