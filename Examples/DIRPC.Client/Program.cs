@@ -9,6 +9,7 @@ using DIRPC.Client;
 
 using GTMH.DI;
 using GTMH.Rabbit.RPC;
+using GTMH.Security;
 
 var environmentName = args.FirstOrDefault(arg => arg.StartsWith("--environment="))?.Split('=')[1] ?? Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT");
 #if DEBUG
@@ -40,6 +41,14 @@ try
     EnvironmentName = environmentName
   } );
   builder.AddGTMHConfig(args, RPCClientConfig.GetCommandLineMappings());
+
+  // no decryption
+  builder.Services.AddSingleton<IDecryptor, PlainText>();
+
+  // setup client config
+  builder.AddRPCClientConfig();
+  // shared config
+  builder.AddRPCSharedConfig();
 
   builder.Services.AddSingleton<Main>();
 
