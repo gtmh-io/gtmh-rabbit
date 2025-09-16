@@ -3,7 +3,6 @@ using GTMH.Rabbit;
 using GTMH.Rabbit.RPC;
 
 using RabbitMQ.Client;
-using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
 // the interface we're exposing
@@ -15,10 +14,9 @@ public interface IHelloWorld
 }
 
 // implementation of the server
-public class ServerImpl(string a_Identity) : IHelloWorld
+public class ServerImpl : IHelloWorld
 {
-  public readonly string Identity = a_Identity;
-  public ValueTask<string> IntroducingAsync(string a_Identity) => ValueTask.FromResult($"Hello {a_Identity}, my name is {Identity}");
+  public ValueTask<string> IntroducingAsync(string a_Identity) => ValueTask.FromResult($"Hello {a_Identity}, I am a Server");
 }
 
 public static class Program
@@ -28,24 +26,15 @@ public static class Program
   {
     var rabbit = args.FirstOrDefault(arg => arg.StartsWith("--rabbit="))?.Split('=')[1] ?? "localhost";
     var runas = (args.FirstOrDefault(arg => arg.StartsWith("--runas="))?.Split('=')[1] ?? "client").ToLower();
-    var identity = args.FirstOrDefault(arg => arg.StartsWith("--identity="))?.Split('=')[1] ?? $"{runas}.roger";
 
-    Console.WriteLine($"I am {identity} connecting to Rabbit@{rabbit}");
-    if(runas == "client")
-    {
-      await RunClient(identity, new RPCFactory(new HostOnlyFactory(rabbit)));
-    }
-    else
-    {
-      await RunServer(identity, new RPCFactory(new HostOnlyFactory(rabbit)));
-    }
+    if(runas == "client") await RunClient(new RPCFactory(new HostOnlyFactory(rabbit)));
+    else await RunServer(new RPCFactory(new HostOnlyFactory(rabbit)));
   }
 
-  private static async ValueTask RunServer(string identity, IRPCFactory rabbit)
+  private static async ValueTask RunServer(IRPCFactory rabbit)
   {
-    Console.WriteLine("Running as server, hit enter to quit...");
-    var serverImpl = new ServerImpl(identity);
-    var serverHost = new HelloWorldDispatch(rabbit, serverImpl);
+    Console.WriteLine($"Running as server@{rabbit.Transport.HostIdentity}, hit enter to quit...");
+    var serverHost = new HelloWorldDispatch(rabbit, new ServerImpl());
     var server = await serverHost.Publish();
     await using(server)
     {
@@ -53,13 +42,16 @@ public static class Program
     }
   }
 
-  private static async ValueTask RunClient(string identity, IRPCFactory rabbit)
+  private static async ValueTask RunClient(IRPCFactory rabbit)
   {
-    Console.WriteLine("Running as client...");
+    Console.WriteLine($"Running as client@{rabbit.Transport.HostIdentity}...");
     var client = new HelloWorldClient(rabbit);
     await client.Connect();
-    var result = await client.IntroducingAsync(identity);
-    Console.WriteLine($"RPC pleasantries... {result}");
+    await using(client)
+    {
+      var result = await client.IntroducingAsync("client");
+      Console.WriteLine($"RPC pleasantries... {result}");
+    }
   }
 }
 
