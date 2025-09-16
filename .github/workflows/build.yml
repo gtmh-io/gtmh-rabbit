@@ -76,7 +76,7 @@ jobs:
             --certificate-path gtmh.io.pfx \
             --certificate-password "${{ secrets.GTMH_CERT_PASSWORD }}" \
             --timestamper http://timestamp.digicert.com \
-            --overwrite
+            --overwrite || true # or true for self signed certificate
         done
 
 # don't whilst we are self signed
