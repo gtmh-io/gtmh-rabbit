@@ -1,216 +1,321 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using System.Security.Cryptography;
+using System.Text;
 
+namespace GTMH.Security;
 
-namespace GTMH.Security
+public sealed class Cipher
 {
-  public struct Cipher
+  private const int SaltSize = 32; // 256 bits
+  private const int KeySize = 32;  // 256 bits
+  private const int NonceSize = 12; // 96 bits for AES-GCM (standard)
+  private const int TagSize = 16;  // 128 bits for GCM
+  private const int Iterations = 100000; // PBKDF2 iterations
+  private const int MaxPayloadSize = 1 << 30; // 1 GB
+
+  // Version for future compatibility
+  private const byte CurrentVersion = 1;
+  private const string HeaderPrefix = "GTMHCipher"; // GTMH Secure Cipher
+  private const int HeaderPrefixLength = 10;
+
+  public ReadOnlyMemory<byte> EncryptedData { get; }
+
+  private Cipher(byte[] encryptedData)
   {
-		internal Cipher(string a_Value, string a_Salt) : this(System.Convert.FromBase64String(a_Value), System.Convert.FromBase64String(a_Salt)) { }
-    internal Cipher(byte[] a_Value, byte[] a_Salt)
-		{
-			Value = a_Value;
-			Salt = a_Salt;
-			if (this.Value.Length > MaxPayload) throw new Exception("Too much data - use a different method to encrypt");
-		}
-    public readonly ReadOnlyMemory<byte> Value;
-    public string ValueStr { get { return System.Convert.ToBase64String(Value.Span); } }
-    public readonly byte[] Salt;
-    public string SaltStr { get { return System.Convert.ToBase64String(Salt); } }
+    EncryptedData = encryptedData;
+  }
 
-    public static Cipher Encrypt(string a_PlainText, string a_AppSecret)
+  /// <summary>
+  /// Encrypts data using AES-GCM with PBKDF2 key derivation
+  /// </summary>
+  public static Cipher Encrypt(string plainText, string password)
+  {
+    if(string.IsNullOrEmpty(plainText))
+      throw new ArgumentNullException(nameof(plainText));
+    if(string.IsNullOrEmpty(password))
+      throw new ArgumentNullException(nameof(password));
+
+    var plainBytes = Encoding.UTF8.GetBytes(plainText);
+    return Encrypt(plainBytes, password);
+  }
+
+  public static Cipher Encrypt(byte[] plainBytes, string password)
+  {
+    if(plainBytes == null || plainBytes.Length == 0)
+      throw new ArgumentNullException(nameof(plainBytes));
+    if(string.IsNullOrEmpty(password))
+      throw new ArgumentNullException(nameof(password));
+    if(plainBytes.Length > MaxPayloadSize)
+      throw new ArgumentException($"Data too large (max {MaxPayloadSize} bytes)");
+
+    // Generate cryptographically secure random salt
+    var salt = RandomNumberGenerator.GetBytes(SaltSize);
+
+    // Derive key using PBKDF2
+    var key = Rfc2898DeriveBytes.Pbkdf2(
+        password: password,
+        salt: salt,
+        iterations: Iterations,
+        hashAlgorithm: HashAlgorithmName.SHA256,
+        outputLength: KeySize);
+
+    // Generate random nonce (12 bytes for AES-GCM)
+    var nonce = RandomNumberGenerator.GetBytes(NonceSize);
+
+    // Encrypt using AES-GCM
+    using(var aes = new AesGcm(key, TagSize))
     {
-      using (PasswordDeriveBytes secret = new PasswordDeriveBytes(a_AppSecret, null))
-      using (var algo = Aes.Create())
-      {
-        algo.Mode = CipherMode.CBC;
-        var salt = NewSaltBytes();
-        using (ICryptoTransform encryptor = algo.CreateEncryptor(secret.GetBytes(algo.KeySize / 8), salt))
-        using (MemoryStream memoryStream = new MemoryStream())
-        using (CryptoStream cryptoStream = new CryptoStream(memoryStream, encryptor, CryptoStreamMode.Write))
-        {
-          byte[] plainTextBytes = Encoding.UTF8.GetBytes(a_PlainText);
-          cryptoStream.Write(plainTextBytes, 0, plainTextBytes.Length);
-          cryptoStream.FlushFinalBlock();
-          byte[] cipherTextBytes = memoryStream.ToArray();
-          return new Cipher(cipherTextBytes, salt);
-        }
-      }
+      var cipherText = new byte[plainBytes.Length];
+      var tag = new byte[TagSize];
+
+      aes.Encrypt(nonce, plainBytes, cipherText, tag);
+
+      // Combine all components
+      // Format: [version(1)][salt(32)][nonce(12)][tag(16)][ciphertext]
+      var result = new byte[1 + SaltSize + NonceSize + TagSize + cipherText.Length];
+
+      result[0] = CurrentVersion;
+      Buffer.BlockCopy(salt, 0, result, 1, SaltSize);
+      Buffer.BlockCopy(nonce, 0, result, 1 + SaltSize, NonceSize);
+      Buffer.BlockCopy(tag, 0, result, 1 + SaltSize + NonceSize, TagSize);
+      Buffer.BlockCopy(cipherText, 0, result, 1 + SaltSize + NonceSize + TagSize, cipherText.Length);
+
+      return new Cipher(result);
     }
-		public static Cipher Encrypt(byte [] a_Bytes, string a_AppSecret)
-		{
-      using (PasswordDeriveBytes secret = new PasswordDeriveBytes(a_AppSecret, null))
-      using (var algo = Aes.Create())
-      {
-        algo.Mode = CipherMode.CBC;
-        var salt = NewSaltBytes();
-        using (ICryptoTransform encryptor = algo.CreateEncryptor(secret.GetBytes(algo.KeySize / 8), salt))
-        using (MemoryStream memoryStream = new MemoryStream())
-        using (CryptoStream cryptoStream = new CryptoStream(memoryStream, encryptor, CryptoStreamMode.Write))
-        {
-          cryptoStream.Write(a_Bytes, 0, a_Bytes.Length);
-          cryptoStream.FlushFinalBlock();
-          byte[] cipherTextBytes = memoryStream.ToArray();
-          return new Cipher(cipherTextBytes, salt);
-        }
-      }
-		}
+  }
 
-    public string Decrypt( string a_AppSecret)
+  /// <summary>
+  /// Decrypts data encrypted with Encrypt method
+  /// </summary>
+  public string DecryptString(string password)
+  {
+    var decrypted = Decrypt(password);
+    return Encoding.UTF8.GetString(decrypted);
+  }
+
+  public byte[] Decrypt(string password)
+  {
+    if(string.IsNullOrEmpty(password))
+      throw new ArgumentNullException(nameof(password));
+
+    var encryptedBytes = EncryptedData.ToArray();
+
+    if(encryptedBytes.Length < 1 + SaltSize + NonceSize + TagSize)
+      throw new ArgumentException("Invalid encrypted data");
+
+    // Check version
+    var version = encryptedBytes[0];
+    if(version != CurrentVersion)
+      throw new NotSupportedException($"Unsupported cipher version: {version}");
+
+    // Extract components
+    var salt = new byte[SaltSize];
+    var nonce = new byte[NonceSize];
+    var tag = new byte[TagSize];
+
+    Buffer.BlockCopy(encryptedBytes, 1, salt, 0, SaltSize);
+    Buffer.BlockCopy(encryptedBytes, 1 + SaltSize, nonce, 0, NonceSize);
+    Buffer.BlockCopy(encryptedBytes, 1 + SaltSize + NonceSize, tag, 0, TagSize);
+
+    var cipherTextLength = encryptedBytes.Length - 1 - SaltSize - NonceSize - TagSize;
+    var cipherText = new byte[cipherTextLength];
+    Buffer.BlockCopy(encryptedBytes, 1 + SaltSize + NonceSize + TagSize, cipherText, 0, cipherTextLength);
+
+    // Derive key
+    var key = Rfc2898DeriveBytes.Pbkdf2(
+        password: password,
+        salt: salt,
+        iterations: Iterations,
+        hashAlgorithm: HashAlgorithmName.SHA256,
+        outputLength: KeySize);
+
+    // Decrypt
+    using(var aes = new AesGcm(key, TagSize))
     {
-      using (PasswordDeriveBytes phrase = new PasswordDeriveBytes(a_AppSecret, null))
-      using (var algo = Aes.Create())
-      {
-        algo.Mode = CipherMode.CBC;
-        byte[] keyBytes = phrase.GetBytes(algo.KeySize / 8);
-        using (ICryptoTransform decryptor = algo.CreateDecryptor(keyBytes, this.Salt))
-        using(MemoryStream memoryStream = new MemoryStream(this.Value.ToArray()))
-        using(CryptoStream cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read))
-        {
-          byte[] plainTextBytes = new byte[this.Value.Length];
-          int decryptedByteCount = cryptoStream.Read(plainTextBytes, 0, plainTextBytes.Length);
-          return Encoding.UTF8.GetString(plainTextBytes, 0, decryptedByteCount);
-        }
-      }
-    }
-
-    public byte[] DecryptBytes( string a_AppSecret)
-    {
-      using (PasswordDeriveBytes phrase = new PasswordDeriveBytes(a_AppSecret, null))
-      using (var algo = Aes.Create())
-      {
-        algo.Mode = CipherMode.CBC;
-        byte[] keyBytes = phrase.GetBytes(algo.KeySize / 8);
-        using (ICryptoTransform decryptor = algo.CreateDecryptor(keyBytes, this.Salt))
-        using(MemoryStream memoryStream = new MemoryStream(this.Value.ToArray()))
-        using(CryptoStream cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read))
-        {
-          byte[] plainTextBytes = new byte[this.Value.Length];
-          int decryptedByteCount = cryptoStream.Read(plainTextBytes, 0, plainTextBytes.Length);
-          var rval = new byte[decryptedByteCount];
-          Array.Copy(plainTextBytes, rval, decryptedByteCount);
-          return rval;
-        }
-      }
-    }
-
-    private static byte[] NewSaltBytes()
-    {
-      var rval = new byte[SaltBytes];
-      (new Random((unchecked((int)DateTime.Now.Ticks)))).NextBytes(rval);
-      return rval;
-    }
-
-    public const string Pream = "GTMHCIPHER";
-    const int LW = 3;
-		public const int SaltBytes = 16;
-		public const int MaxPayload = 1 << 30; // 1 GB
-    public override string ToString()
-    {
-			var slt = this.SaltStr;
-      if (slt.Length > 999) throw new Exception("Herve is dumb");
-      return String.Format("{0}{1}{2}{3}", Pream, slt.Length.ToString().PadLeft(LW, '0'), slt, this.ValueStr);
-    }
-
-    public static Cipher Parse(string a_Value)
-    {
-      Cipher rval;
-      if (!TryParse(a_Value, out rval))
-      {
-        throw new ArgumentException("Failed parse cipher");
-      }
-      return rval;
-    }
-    public static bool TryParse(string a_Value, out Cipher a_Rval)
-    {
-      if (a_Value == null || a_Value.Length < Pream.Length + LW)
-      {
-        a_Rval = new Cipher();
-        return false;
-      }
-
-      int sw;
-
-      if (!int.TryParse(a_Value.Substring(Pream.Length, LW), out sw) || sw<1)
-      {
-        a_Rval = new Cipher();
-        return false;
-      }
-			a_Value = a_Value.Trim();
-			if ( a_Value.Length < Pream.Length + LW+sw )
-      {
-        a_Rval = new Cipher();
-        return false;
-      }
+      var plainText = new byte[cipherTextLength];
 
       try
       {
-        a_Rval = new Cipher(a_Value.Substring(Pream.Length + LW + sw), a_Value.Substring(Pream.Length + LW, sw));
+        aes.Decrypt(nonce, cipherText, tag, plainText);
+        return plainText;
       }
-      catch (FormatException)
+      catch(CryptographicException)
       {
-        a_Rval = new Cipher();
-        return false;
+        throw new InvalidOperationException("Decryption failed - invalid password or corrupted data");
       }
+    }
+  }
+
+  /// <summary>
+  /// Converts the cipher to a string representation
+  /// Format: "GTMHSC:v1:base64data"
+  /// </summary>
+  public override string ToString()
+  {
+    var base64 = Convert.ToBase64String(EncryptedData.Span);
+    return $"{HeaderPrefix}:v{CurrentVersion}:{base64}";
+  }
+
+  /// <summary>
+  /// Tries to parse a string representation back to Cipher
+  /// </summary>
+  public static bool TryParse(string value, out Cipher? cipher)
+  {
+    cipher = null;
+
+    if(string.IsNullOrWhiteSpace(value))
+      return false;
+
+    var parts = value.Split(':', 3);
+    if(parts.Length != 3)
+      return false;
+
+    // Check header
+    if(parts[0] != HeaderPrefix)
+      return false;
+
+    // Check version
+    if(!parts[1].StartsWith("v") || !byte.TryParse(parts[1].Substring(1), out var version))
+      return false;
+
+    // Currently only support version 1
+    if(version != CurrentVersion)
+      return false;
+
+    // Parse base64 data
+    try
+    {
+      var encryptedData = Convert.FromBase64String(parts[2]);
+
+      // Validate minimum length
+      if(encryptedData.Length < 1 + SaltSize + NonceSize + TagSize)
+        return false;
+
+      // Validate version byte in data matches
+      if(encryptedData[0] != version)
+        return false;
+
+      cipher = new Cipher(encryptedData);
       return true;
     }
+    catch(FormatException)
+    {
+      return false;
+    }
+  }
 
-		public byte[] ToBytes()
-		{
-			using (var mem = new System.IO.MemoryStream())
-			using (var writer = new System.IO.BinaryWriter(mem))
-			{
-				writer.Write(System.Convert.FromBase64String(Pream));
-				writer.Write(Salt);
-				writer.Write(this.Value.Length);
-				writer.Write(this.Value.ToArray());
-				return mem.ToArray();
-			}
-		}
+  /// <summary>
+  /// Parses a string representation to Cipher
+  /// </summary>
+  public static Cipher Parse(string value)
+  {
+    if(TryParse(value, out var cipher) && cipher != null)
+      return cipher;
 
-		private static bool fail(out Cipher a_Rval)
-		{
-			a_Rval = new Cipher();
-			return false;
-		}
-		public static bool TryParse(byte[] a_Value, out Cipher a_Rval)
-		{
-			if (a_Value == null || a_Value.Length == 0)
-			{
-				return fail(out a_Rval);
-			}
-			var preamBytes = System.Convert.FromBase64String(Pream);
-			byte[] buf = new byte[0];
-			Func<byte[], bool> cmp_buf = expect =>
-			{
-				if (expect == null || expect.Length != buf.Length) return false;
-				for (int i = 0; i != expect.Length; ++i)
-				{
-					if (buf[i] != expect[i]) return false;
-				}
-				return true;
-			};
-			using (var mem = new System.IO.MemoryStream(a_Value))
-			using (var reader = new BinaryReader(mem))
-			{
-				buf = reader.ReadBytes(preamBytes.Length);
-				if (!cmp_buf(preamBytes)) return fail(out a_Rval);
-				var salt = reader.ReadBytes(SaltBytes);
-				if (salt == null || salt.Length != SaltBytes) return fail(out a_Rval);
+    throw new FormatException("Invalid Cipher string format");
+  }
 
-				var payloadLength = reader.ReadInt32();
-				if (payloadLength < 0 || payloadLength > MaxPayload) return fail(out a_Rval);
-				var payload = reader.ReadBytes(payloadLength);
-				if (payload == null || payload.Length != payloadLength) return fail(out a_Rval);
+  /// <summary>
+  /// Alternative format using binary serialization
+  /// </summary>
+  public byte[] ToBytes()
+  {
+    using var ms = new MemoryStream();
+    using var writer = new BinaryWriter(ms);
 
-				a_Rval = new Cipher(payload, salt);
-				return true;
-			}
-		}
+    // Write magic header
+    writer.Write(Encoding.ASCII.GetBytes(HeaderPrefix));
+
+    // Write version
+    writer.Write(CurrentVersion);
+
+    // Write data length and data
+    writer.Write(EncryptedData.Length);
+    writer.Write(EncryptedData.Span);
+
+    return ms.ToArray();
+  }
+
+  /// <summary>
+  /// Try parse from binary format
+  /// </summary>
+  public static bool TryParseBytes(ReadOnlySpan<byte> data, out Cipher? cipher)
+  {
+    cipher = null;
+
+    if(data.Length < HeaderPrefixLength + 1 + 4) // header + version + length
+      return false;
+
+    // Check magic header
+    var headerBytes = Encoding.ASCII.GetBytes(HeaderPrefix);
+    if(!data.Slice(0, HeaderPrefixLength).SequenceEqual(headerBytes))
+      return false;
+
+    var position = HeaderPrefixLength;
+
+    // Read version
+    var version = data[position++];
+    if(version != CurrentVersion)
+      return false;
+
+    // Read data length
+    var dataLength = BitConverter.ToInt32(data.Slice(position, 4));
+    position += 4;
+
+    if(dataLength < 0 || dataLength > MaxPayloadSize)
+      return false;
+
+    if(data.Length < position + dataLength)
+      return false;
+
+    // Read encrypted data
+    var encryptedData = data.Slice(position, dataLength).ToArray();
+
+    cipher = new Cipher(encryptedData);
+    return true;
+  }
+
+  /// <summary>
+  /// Convenience method for round-trip testing
+  /// </summary>
+  public static bool RoundTripTest(string originalText, string password)
+  {
+    try
+    {
+      // Encrypt
+      var cipher = Encrypt(originalText, password);
+
+      // Convert to string and back
+      var stringForm = cipher.ToString();
+      if(!TryParse(stringForm, out var parsedCipher) || parsedCipher == null)
+        return false;
+
+      // Decrypt
+      var decrypted = parsedCipher.DecryptString(password);
+
+      return originalText == decrypted;
+    }
+    catch
+    {
+      return false;
+    }
+  }
+
+  // Serialization helpers
+  public string ToBase64() => Convert.ToBase64String(EncryptedData.Span);
+
+  public static Cipher FromBase64(string base64)
+  {
+    var bytes = Convert.FromBase64String(base64);
+
+    // Validate minimum structure
+    if(bytes.Length < 1 + SaltSize + NonceSize + TagSize)
+      throw new ArgumentException("Invalid encrypted data length");
+
+    if(bytes[0] != CurrentVersion)
+      throw new NotSupportedException($"Unsupported version: {bytes[0]}");
+
+    return new Cipher(bytes);
   }
 }
