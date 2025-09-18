@@ -18,13 +18,13 @@ Console.WriteLine($"Connecting to {rabbit.HostIdentity} {with_without} a passwor
 
 
 using var cts = new CancellationTokenSource();
-//var sourceFactory = new RabbitStreamSourceFactory<TTJMessage>(rabbit, new LegacyTopology<TTJMessage>("tofye.ttj"));
-var sourceFactory = new RabbitStreamSourceFactory<PingMsg>(rabbit, new LegacyTopology<PingMsg>("tofye.ping"));
+var sourceFactory = new RabbitStreamSourceFactory<TTJMessage>(rabbit, new LegacyTopology<TTJMessage>("tofye.ttj"));
+//var sourceFactory = new RabbitStreamSourceFactory<PingMsg>(rabbit, new LegacyTopology<PingMsg>("tofye.ping"));
 var source = await sourceFactory.CreateSource(cts.Token);
 await using(source)
 {
-  //await source.AddListenerAsync(null, new Listener<TTJMessage>());
-  await source.AddListenerAsync(null, new Listener<PingMsg>());
+  await source.AddListenerAsync("#", new Listener<TTJMessage>());
+  //await source.AddListenerAsync(null, new Listener<PingMsg>());
   Console.WriteLine("Running");
   await Task.Run(()=>Console.ReadLine());
   cts.Cancel();
