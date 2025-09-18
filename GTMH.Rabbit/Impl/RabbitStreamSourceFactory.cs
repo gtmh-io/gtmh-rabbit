@@ -42,9 +42,21 @@ namespace GTMH.Rabbit.Impl
         this.Log=a_Log;
       }
 
+      static string RoutingKey(string? a_RoutingKey)
+      {
+        if(a_RoutingKey == null)
+        {
+          return "#";
+        }
+        else
+        {
+          if(a_RoutingKey == "") return "#";
+          else return a_RoutingKey;
+        }
+      }
+
       public async ValueTask AddListenerAsync(string? a_RoutingKey, IMessageStreamListener<M> a_Listener)
       {
-        var rk = string.IsNullOrEmpty(a_RoutingKey) ? "*" : a_RoutingKey;
         string queueName = Topology.ConsumerQueueName(a_RoutingKey);
         if(Topology.ConsumerPersists)
         {
@@ -54,6 +66,7 @@ namespace GTMH.Rabbit.Impl
         {
           await Connection.Channel.QueueDeclareAsync(queueName);
         }
+        var rk = RoutingKey(a_RoutingKey);
         await Connection.Channel.QueueBindAsync(queueName, Connection.Topology.ExchangeName, rk);
         var consumer = new AsyncEventingBasicConsumer(Connection.Channel);
         consumer.ReceivedAsync += async (ch, ea)=>

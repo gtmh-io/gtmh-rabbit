@@ -38,7 +38,6 @@ namespace GTMH.Rabbit.Impl
 
       public async ValueTask PublishAsync(string a_RoutingKey, M a_Msg, CancellationToken a_Cancel = default)
       {
-        if ( string.IsNullOrEmpty(a_RoutingKey) ) throw new ArgumentException("Empty routing key is ambiguous");
         var payload = PBuffer.Create(a_Msg).Data;
         await Connection.Channel.BasicPublishAsync(Connection.Topology.ExchangeName, a_RoutingKey, mandatory:false, payload, a_Cancel);
       }
