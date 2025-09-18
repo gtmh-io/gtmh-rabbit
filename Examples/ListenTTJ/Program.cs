@@ -4,6 +4,7 @@ using GTMH.Util;
 
 using RabbitMQ.Client;
 
+using Tofye.Infrastructure;
 using Tofye.Racing;
 
 var rabbit_host = args.GetCmdLine("rabbit_host", "localhost");
@@ -17,30 +18,31 @@ Console.WriteLine($"Connecting to {rabbit.HostIdentity} {with_without} a passwor
 
 
 using var cts = new CancellationTokenSource();
-var sourceFactory = new RabbitStreamSourceFactory<TTJMessage>(rabbit, new LegacyTopology());
+//var sourceFactory = new RabbitStreamSourceFactory<TTJMessage>(rabbit, new LegacyTopology<TTJMessage>("tofye.ttj"));
+var sourceFactory = new RabbitStreamSourceFactory<PingMsg>(rabbit, new LegacyTopology<PingMsg>("tofye.ping"));
 var source = await sourceFactory.CreateSource(cts.Token);
 await using(source)
 {
-  await source.AddListenerAsync(null, new Listener());
+  //await source.AddListenerAsync(null, new Listener<TTJMessage>());
+  await source.AddListenerAsync(null, new Listener<PingMsg>());
   Console.WriteLine("Running");
   await Task.Run(()=>Console.ReadLine());
   cts.Cancel();
 }
 
 
-class Listener : IMessageStreamListener<TTJMessage>
+class Listener<M> : IMessageStreamListener<M>
 {
-  public ValueTask OnReceivedAsync(TTJMessage a_Msg)
+  public ValueTask OnReceivedAsync(M a_Msg)
   {
     Console.WriteLine($"Received {a_Msg}");
     return ValueTask.CompletedTask;
   }
 }
 
-class LegacyTopology : TransientQueueTopology_t<TTJMessage>
+class LegacyTopology<M>(string a_ExchangeName) : TransientQueueTopology_t<M>
 {
-  public override string ExchangeName => "tofye.ttj";
-
+  public override string ExchangeName => a_ExchangeName;
 }
 
 class HostFactory(string HostName, string? Secret, string ? User) : IRabbitFactory
