@@ -1,11 +1,42 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using GTMH.DI.Security;
+using GTMH.Security;
+
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace GTMH.DI;
 
 public static class Hosted
 {
-  public static IHostApplicationBuilder AddGTMHConfig(this IHostApplicationBuilder builder, string [] ? args = null, Dictionary<string, string> ? a_CmdLineMappings = null)
+  public static IHostApplicationBuilder AddGTMHCipherEncryption(this IHostApplicationBuilder builder)
+  {
+    builder.Services.AddSingleton<IDecryptor, GTMH.DI.Security.CipherEncryption>();
+    builder.Services.AddOptions<CipherConfig>()
+      .Bind(builder.Configuration.GetSection(nameof(CipherConfig)))
+      .ValidateDataAnnotations()
+      .ValidateOnStart();
+    return builder;
+  }
+
+  public static IHostApplicationBuilder AddGTMHConfig(this IHostApplicationBuilder builder)
+  {
+    return builder.AddGTMHConfig(null, null);
+  }
+
+  public static IHostApplicationBuilder AddGTMHConfig(this IHostApplicationBuilder builder, string[] args, Dictionary<string, string> a_MappingsA, Dictionary<string,string> a_MappingsB, params Dictionary<string,string> [] a_VA)
+  {
+    var mappings = new Dictionary<string, string>();
+    foreach (var kvp in a_MappingsA) mappings.Add(kvp.Key, kvp.Value);
+    foreach (var kvp in a_MappingsB) mappings.Add(kvp.Key, kvp.Value);
+    foreach(var mapping in a_VA)
+    {
+      foreach (var kvp in mapping) mappings.Add(kvp.Key, kvp.Value);
+    }
+    return builder.AddGTMHConfig(args, mappings);
+  }
+
+  public static IHostApplicationBuilder AddGTMHConfig(this IHostApplicationBuilder builder, string [] ? args, Dictionary<string, string> ? a_CmdLineMappings = null)
   {
     builder.Configuration
       .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)

@@ -13,6 +13,7 @@ namespace GTMH.Rabbit
     {
       var rval = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
       rval.Add( "-rabbit.host", $"{nameof(RabbitConfig)}:{nameof(RabbitConfig.Host)}");
+      rval.Add( "--rabbit.host", $"{nameof(RabbitConfig)}:{nameof(RabbitConfig.Host)}");
       return rval;
     }
   }
