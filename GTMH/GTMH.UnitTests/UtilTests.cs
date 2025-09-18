@@ -26,7 +26,22 @@ namespace GTMH.UnitTests
       await Assert.That(new[] { "--arg=value" }.GetCmdLine("--arg")).IsEqualTo("value");
 
       await Assert.That(new[] { "-argx=value" }.GetCmdLine("arg")).IsNull();
-
+    }
+    [Test]
+    public async ValueTask TestCmdLineArgsEmpty()
+    {
+      await Assert.That(new[] { "-arg=" }.GetCmdLine("arg")).IsNull();
+    }
+    [Test]
+    public async ValueTask TestCmdLineArgsEmptyWithDefault()
+    {
+      await Assert.That(new[] { "-arg=" }.GetCmdLine("arg", "default")).IsEqualTo("default");
+    }
+    [Test]
+    public async ValueTask TestCmdLineArgsHasEquals()
+    {
+      var value = "GTMH:v1:AYy4FAVpUtdWdRXvEJe6QsXK39MFSKsllubT4BoytI7VppvEfSzf1w9UR1smpgnuHeWkHeQJ9B6vwOTsZLBxTAc=";
+      await Assert.That(new[] { $"-arg={value}" }.GetCmdLine("arg")).IsEqualTo("GTMH:v1:AYy4FAVpUtdWdRXvEJe6QsXK39MFSKsllubT4BoytI7VppvEfSzf1w9UR1smpgnuHeWkHeQJ9B6vwOTsZLBxTAc=");
     }
   }
 }

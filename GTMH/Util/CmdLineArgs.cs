@@ -12,7 +12,7 @@ namespace GTMH.Util
       return args.FirstOrDefault(arg =>
       {
         return arg.StartsWith($"--{a_ArgName}=")||arg.StartsWith($"-{a_ArgName}=");
-       })?.Split('=')[1] ?? a_Default;
+       })?.GetArgValue() ?? a_Default;
     }
     public static string ? GetCmdLine(this string[] args, string a_ArgName)
     {
@@ -20,7 +20,13 @@ namespace GTMH.Util
       return args.FirstOrDefault(arg =>
       {
         return arg.StartsWith($"--{a_ArgName}=")||arg.StartsWith($"-{a_ArgName}=");
-       })?.Split('=')[1] ?? null;
+       })?.GetArgValue() ?? null;
+    }
+    private static string ? GetArgValue(this string a_KVP)
+    {
+      var idx = a_KVP.IndexOf('=');
+      var rval = a_KVP.Substring(idx+1);
+      return string.IsNullOrEmpty(rval)?null: rval;
     }
   }
 }
