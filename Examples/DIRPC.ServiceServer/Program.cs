@@ -17,26 +17,13 @@ using GTMH.DI;
 using GTMH.Rabbit.RPC;
 using GTMH.Security;
 
-var environmentName = args.FirstOrDefault(arg => arg.StartsWith("--environment="))?.Split('=')[1] ?? Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT");
-#if DEBUG
-// hosting environment is set via the environment variable DOTNET_ENVIRONMENT and defaults to Production
-if(environmentName == null) // can force
-{
-  environmentName="Development";
-}
-#else
-if(environmentName == null) // can force
-{
-  environmentName = "Production";
-}
-#endif
+var environmentName = GTMH.DI.Hosted.GetEnvironmenName(args);
 
 // let's have logging in case of error
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
     .WriteTo.Console()
     .CreateBootstrapLogger();
-
 try
 {
   Log.Information($"Starting server PId={System.Diagnostics.Process.GetCurrentProcess().Id} PWD={System.IO.Directory.GetCurrentDirectory()}");
@@ -45,28 +32,7 @@ try
   var builder = Host.CreateApplicationBuilder(new HostApplicationBuilderSettings { ContentRootPath = AppContext.BaseDirectory, EnvironmentName = environmentName } );
   builder.Services.AddHostedService<Worker>();
 
-#if WINDOWS
-  builder.Services.AddWindowsService(options =>
-  {
-      options.ServiceName = "DROPS.TestWorker"; // TODO this is dodgy AF
-  });
-  if (System.IO.Directory.GetCurrentDirectory().ToLower().StartsWith(@"c:\windows"))
-  {
-    // deal with windows starting services in dumb places
-    var loc = System.Reflection.Assembly.GetEntryAssembly()?.Location;
-    if(loc != null)
-    {
-      loc = System.IO.Path.GetDirectoryName(loc);
-      if(loc != null)
-      {
-        System.IO.Directory.SetCurrentDirectory(loc);
-      }
-    }
-  }
-#elif LINUX
-  builder.Services.AddSystemd();
-#endif
-
+  builder.SetPlaformService("DROPS.TestWorker");
 
   // GTMH sepcific config
   // have appsettings stuff read

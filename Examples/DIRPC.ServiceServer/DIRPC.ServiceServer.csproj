@@ -25,7 +25,7 @@
     <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="8.0.0" />
     <!--<PackageReference Include="Serilog.Sinks.EventLog" Version="4.0.0" />-->
   </ItemGroup>
-    <!-- Linux-specific packages (if needed) -->
+    <!-- Linux-specific packages -->
   <ItemGroup Condition="$([MSBuild]::IsOSPlatform('Linux'))">
     <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="8.0.0" />
   </ItemGroup>
