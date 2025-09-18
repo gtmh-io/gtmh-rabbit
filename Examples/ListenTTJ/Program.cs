@@ -4,7 +4,6 @@ using GTMH.Util;
 
 using RabbitMQ.Client;
 
-using Tofye.Infrastructure;
 using Tofye.Racing;
 
 var rabbit_host = args.GetCmdLine("rabbit_host", "localhost");
