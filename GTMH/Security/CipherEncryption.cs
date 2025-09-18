@@ -22,5 +22,6 @@ namespace GTMH.Security
       return cipher.DecryptString(Secret);
 #pragma warning restore 8602
     }
+    public string Encrypt(string a_PlainText) => Cipher.Encrypt(a_PlainText, Secret).ToString();
   }
 }
