@@ -22,5 +22,6 @@
   <ItemGroup>
     <ProjectReference Include="..\DIRPC.Shared\DIRPC.Shared.csproj" />
     <ProjectReference Include="..\..\GTMH.DI\GTMH.DI.csproj" />
+    <ProjectReference Include="..\..\GTMH.Rabbit.RPC.DI\GTMH.Rabbit.RPC.DI.csproj" />
   </ItemGroup>
 </Project>

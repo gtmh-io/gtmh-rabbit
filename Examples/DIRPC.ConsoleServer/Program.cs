@@ -50,14 +50,11 @@ try
     .ReadFrom.Services(services)
     .Enrich.FromLogContext());
 
-  // standard DI config
+  // standard DI config & run
   builder.Services.AddSingleton<Main>();
   using var app = builder.Build();
   var main = app.Services.GetRequiredService<Main>();
-  await using(main)
-  {
-    return await main.RunAsync();
-  }
+  return await main.RunAsync();
 }
 catch (Exception ex)
 {

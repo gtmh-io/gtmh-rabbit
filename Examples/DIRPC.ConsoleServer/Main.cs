@@ -10,11 +10,11 @@ using System.Text;
 
 namespace DIRPC.ConsoleServer;
 
-public class Main : IAsyncDisposable
+public class Main
 {
   public class ServerImpl : IHelloWorld
   {
-    public ValueTask<string> IntroducingAsync(string a_Identity) => ValueTask.FromResult($"Hello {a_Identity}, I am a GTMH.RPC.HelloWorldServer");
+    public ValueTask<string> IntroducingAsync(string a_Identity) => ValueTask.FromResult($"Hello {a_Identity}, I am a GTMH.RPC.HelloWorldServer.Console");
   }
 
   private readonly ILogger<Main> Log;
@@ -28,7 +28,6 @@ public class Main : IAsyncDisposable
 
   public async ValueTask<int> RunAsync()
   {
-
     var server = await m_ServiceHost.Publish();
     await using(server)
     {
@@ -37,10 +36,5 @@ public class Main : IAsyncDisposable
 
     }
     return 0;
-  }
-
-  public ValueTask DisposeAsync()
-  {
-    return ValueTask.CompletedTask;
   }
 }
