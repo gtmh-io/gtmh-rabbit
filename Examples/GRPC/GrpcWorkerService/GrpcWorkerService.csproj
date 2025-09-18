@@ -20,4 +20,8 @@
     <Protobuf Include="Protos\greeter.proto" GrpcServices="Server" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\GrpcCommon\GrpcCommon.csproj" />
+  </ItemGroup>
+
 </Project>

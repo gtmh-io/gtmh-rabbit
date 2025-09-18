@@ -14,7 +14,7 @@ builder.Services.AddHostedService<Worker>();
 // Configure Kestrel
 builder.WebHost.ConfigureKestrel(options =>
 {
-  options.ListenAnyIP(0, listenOptions =>
+  options.ListenAnyIP(5001, listenOptions =>
   {
     listenOptions.Protocols = HttpProtocols.Http2;
   });

@@ -23,4 +23,8 @@
     <Protobuf Include="..\GrpcWorkerService\Protos\greeter.proto" GrpcServices="Client" Link="Protos\greeter.proto" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\GrpcCommon\GrpcCommon.csproj" />
+  </ItemGroup>
+
 </Project>
