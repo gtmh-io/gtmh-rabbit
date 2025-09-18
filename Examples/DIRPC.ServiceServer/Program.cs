@@ -15,7 +15,7 @@ using Serilog;
 
 using GTMH.DI;
 using GTMH.Rabbit.RPC;
-using GTMH.DI.Security;
+using GTMH.Security;
 
 var environmentName = GTMH.DI.Hosted.GetEnvironmenName(args);
 
@@ -36,9 +36,9 @@ try
 
   // GTMH sepcific config
   // have appsettings stuff read
-  builder.AddGTMHConfig(args, RPCClientConfig.GetCommandLineMappings(), CipherConfig.GetCommandLineMappings());
+  builder.AddGTMHConfig(args, RPCClientConfig.GetCommandLineMappings());
   // no decryption
-  builder.AddGTMHCipherEncryption();
+  builder.Services.AddSingleton<IDecryptor, PlainText>();
   // shared config
   builder.AddRPCSharedConfig();
 
