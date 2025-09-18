@@ -4,6 +4,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
+#if WINDOWS
+using Microsoft.Extensions.Hosting.WindowsServices;
+#elif LINUX
+using Microsoft.Extensions.Hosting.Systemd;
+#endif
+
+
 using Serilog;
 
 using GTMH.DI;
@@ -32,11 +39,34 @@ Log.Logger = new LoggerConfiguration()
 
 try
 {
-    Log.Information("Starting server...");
+  Log.Information($"Starting server PId={System.Diagnostics.Process.GetCurrentProcess().Id} PWD={System.IO.Directory.GetCurrentDirectory()}");
+
   // do not pass args to application builder
-  //
   var builder = Host.CreateApplicationBuilder(new HostApplicationBuilderSettings { ContentRootPath = AppContext.BaseDirectory, EnvironmentName = environmentName } );
   builder.Services.AddHostedService<Worker>();
+
+  #if WINDOWS
+  builder.Services.AddWindowsService(options =>
+  {
+      options.ServiceName = "DROPS.TestWorker";
+  });
+  if (System.IO.Directory.GetCurrentDirectory().ToLower().StartsWith(@"c:\windows"))
+  {
+    // deal with windows starting services in dumb places
+    var loc = System.Reflection.Assembly.GetEntryAssembly()?.Location;
+    if(loc != null)
+    {
+      loc = System.IO.Path.GetDirectoryName(loc);
+      if(loc != null)
+      {
+        System.IO.Directory.SetCurrentDirectory(loc);
+      }
+    }
+  }
+#elif LINUX
+  builder.Services.AddSystemd();
+#endif
+
 
   // GTMH sepcific config
   // have appsettings stuff read
