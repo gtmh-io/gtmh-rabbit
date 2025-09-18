@@ -45,10 +45,10 @@ try
   var builder = Host.CreateApplicationBuilder(new HostApplicationBuilderSettings { ContentRootPath = AppContext.BaseDirectory, EnvironmentName = environmentName } );
   builder.Services.AddHostedService<Worker>();
 
-  #if WINDOWS
+#if WINDOWS
   builder.Services.AddWindowsService(options =>
   {
-      options.ServiceName = "DROPS.TestWorker";
+      options.ServiceName = "DROPS.TestWorker"; // TODO this is dodgy AF
   });
   if (System.IO.Directory.GetCurrentDirectory().ToLower().StartsWith(@"c:\windows"))
   {
