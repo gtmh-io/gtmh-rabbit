@@ -19,7 +19,9 @@ namespace GTMH.UnitTests
 
       var parsed = Cipher.TryParse(c.ToString(), out var _c);
       await Assert.That(parsed).IsTrue();
+#pragma warning disable 8602 // possible null
       await Assert.That(_c.DecryptString(Secret)).IsEqualTo("content");
+#pragma warning restore 8602 // possible null
 
       // salt should tumble content
       var d = Cipher.Encrypt("content", Secret);

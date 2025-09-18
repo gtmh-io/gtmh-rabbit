@@ -16,8 +16,8 @@ public sealed class Cipher
 
   // Version for future compatibility
   private const byte CurrentVersion = 1;
-  private const string HeaderPrefix = "GTMHCipher"; // GTMH Secure Cipher
-  private const int HeaderPrefixLength = 10;
+  private const string HeaderPrefix = "GTMH";
+  private const int HeaderPrefixLength = 4;
 
   public ReadOnlyMemory<byte> EncryptedData { get; }
 
