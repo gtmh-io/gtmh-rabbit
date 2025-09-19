@@ -28,7 +28,8 @@ namespace GTMH.Rabbit.UnitTests
     }
     public const int WaitRabbitDispatch = 1000;
     public readonly string Scope = Guid.NewGuid().ToString();
-    public readonly RabbitFactory RF = new RabbitFactory(new RabbitConfig { Host = "localhost" }, new PlainText());
+    //public readonly RabbitFactory RF = new RabbitFactory(new RabbitConfig { Host = "localhost" }, new PlainText());
+    public readonly RabbitFactory RF = new RabbitFactory(new RabbitConfig { Host = "drops-lap-12" }, new PlainText());
     public readonly Mock<ILogger<RabbitStreamSourceFactory<Msg>>> MsgSrcLog = new();
     public readonly Mock<ILogger<RabbitStreamSinkFactory<Msg>>> MsgSinkLog = new();
   }
