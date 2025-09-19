@@ -34,6 +34,10 @@ public class ListenerTests : MQUnitTests
         await sink.PublishAsync("a", Msg.New());
         await Task.Delay(WaitRabbitDispatch);
         await Assert.That(l.Recvd.Count).IsEqualTo(3);
+
+        await sink.PublishAsync("b", Msg.New());
+        await Task.Delay(WaitRabbitDispatch);
+        await Assert.That(l.Recvd.Count).IsEqualTo(3);
       }
     }
   }

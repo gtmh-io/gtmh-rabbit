@@ -7,6 +7,7 @@ using RabbitMQ.Client.Events;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace GTMH.Rabbit.Impl
@@ -34,7 +35,33 @@ namespace GTMH.Rabbit.Impl
       private readonly IMQTopology<M> Topology;
       private RabbitInstance<M>.StreamConnection<M> Connection;
       private readonly ILogger Log;
-      ConcurrentDictionary<IMessageStreamListener<M>, string> m_Listeners = new();
+
+
+      readonly struct ListenerKey : IEquatable<ListenerKey> 
+      {
+        private readonly IMessageStreamListener<M> Listener;
+        private readonly string? Topic;
+
+        public ListenerKey(IMessageStreamListener<M> a_Listener, string? a_Topic)
+        {
+          this.Listener = a_Listener;
+          this.Topic = a_Topic;
+
+        }
+        public bool Equals(ListenerKey other) => this.Listener==other.Listener && this.Topic==other.Topic;
+        public override bool Equals([NotNullWhen(true)] object? obj)
+        {
+          if ( obj == null ) return false;
+          return this.Equals((ListenerKey)obj);
+        }
+        public override int GetHashCode() => (Listener, Topic).GetHashCode();
+      }
+      class ConsumerTag
+      {
+        public string Value { get; set; } = "<not_set>";
+      }
+
+      ConcurrentDictionary<ListenerKey, ConsumerTag> m_TopicListeners = new();
       public Source(RabbitInstance<M>.StreamConnection<M> stream, ILogger a_Log, IMQTopology<M> a_Topology)
       {
         this.Topology = a_Topology;
@@ -57,41 +84,61 @@ namespace GTMH.Rabbit.Impl
 
       public async ValueTask AddListenerAsync(string? a_RoutingKey, IMessageStreamListener<M> a_Listener)
       {
-        string queueName = Topology.ConsumerQueueName(a_RoutingKey);
-        if(Topology.ConsumerPersists)
+        // we only allow one listener per topic so try add now with a placeholder consumer tag
+        // placeholder will do as peeps shouldn't be calling RemoveListener until addlistener's completed
+        var lk = new ListenerKey(a_Listener, a_RoutingKey);
+        if(!m_TopicListeners.TryAdd(lk, new ConsumerTag()))
         {
-          await Connection.Channel.QueueDeclareAsync(queueName, durable: true, autoDelete: false, exclusive: false);
+          throw new ArgumentException($"Listener with given routing key is already added");
         }
-        else
+        bool failure = true;
+        try
         {
-          await Connection.Channel.QueueDeclareAsync(queueName);
+          string queueName = Topology.ConsumerQueueName(a_RoutingKey);
+          if(Topology.ConsumerPersists)
+          {
+            await Connection.Channel.QueueDeclareAsync(queueName, durable: true, autoDelete: false, exclusive: false);
+          }
+          else
+          {
+            await Connection.Channel.QueueDeclareAsync(queueName);
+          }
+          var rk = RoutingKey(a_RoutingKey);
+          await Connection.Channel.QueueBindAsync(queueName, Connection.Topology.ExchangeName, rk);
+          var consumer = new AsyncEventingBasicConsumer(Connection.Channel);
+          consumer.ReceivedAsync += async (ch, ea) =>
+          {
+            M msg;
+            try
+            {
+              msg = PBuffer.GetValue<M>(ea.Body);
+            }
+            catch(Exception e)
+            {
+              this.Log.LogError(e, "Failed Deserialise");
+              return;
+            }
+            try
+            {
+              await a_Listener.OnReceivedAsync(msg);
+            }
+            catch(Exception e)
+            {
+              this.Log.LogError(e, "Listener borked");
+            }
+          };
+          var consumerTag = await Connection.Channel.BasicConsumeAsync(queueName, true, consumer);
+          // store the consumer tag
+          m_TopicListeners[lk].Value = consumerTag;
+          failure = false;
         }
-        var rk = RoutingKey(a_RoutingKey);
-        await Connection.Channel.QueueBindAsync(queueName, Connection.Topology.ExchangeName, rk);
-        var consumer = new AsyncEventingBasicConsumer(Connection.Channel);
-        consumer.ReceivedAsync += async (ch, ea)=>
+        finally
         {
-          M msg;
-          try
+          if(failure)
           {
-            msg = PBuffer.GetValue<M>(ea.Body);
+            m_TopicListeners.TryRemove(lk, out var _ );
           }
-          catch(Exception e)
-          {
-            this.Log.LogError(e, "Failed Deserialise");
-            return;
-          }
-          try
-          {
-            await a_Listener.OnReceivedAsync(msg);
-          }
-          catch(Exception e)
-          {
-            this.Log.LogError(e, "Listener borked");
-          }
-        };
-        var consumerTag = await Connection.Channel.BasicConsumeAsync(queueName, true, consumer);
-        m_Listeners.TryAdd(a_Listener, consumerTag);
+        }
       }
 
       public async ValueTask DisposeAsync()
@@ -101,9 +148,10 @@ namespace GTMH.Rabbit.Impl
 
       public async ValueTask RemoveListenerAsync(string? a_RoutingKey, IMessageStreamListener<M> a_Listener)
       {
-        if(m_Listeners.TryRemove(a_Listener, out var consumerTag))
+        var lk = new ListenerKey(a_Listener, a_RoutingKey);
+        if(m_TopicListeners.TryRemove(lk, out var consumerTag))
         {
-          await Connection.Channel.BasicCancelAsync(consumerTag);
+          await Connection.Channel.BasicCancelAsync(consumerTag.Value);
         }
       }
     }
