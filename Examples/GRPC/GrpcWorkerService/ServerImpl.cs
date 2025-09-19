@@ -1,8 +1,10 @@
 using Grpc.Core;
 
+using GrpcCommon;
+
 namespace GrpcWorkerService;
 
-public class ServerImpl : Greeter.GreeterBase
+public class ServerImpl : HelloWorld.HelloWorldBase
 {
     private readonly ILogger<ServerImpl> _logger;
 
@@ -11,7 +13,7 @@ public class ServerImpl : Greeter.GreeterBase
         _logger = logger;
     }
 
-    public override Task<HelloReply> SayHello(HelloRequest request, ServerCallContext context)
+    public override Task<HelloReply> Introducing(HelloRequest request, ServerCallContext context)
     {
         _logger.LogInformation($"Received request from {request.Name}");
         

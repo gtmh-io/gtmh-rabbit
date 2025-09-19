@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Configure services
 builder.Services.AddGrpc();
-builder.Services.AddGrpcReflection();
+//builder.Services.AddGrpcReflection();
 builder.Services.AddHostedService<Worker>();
 
 // Configure Kestrel
@@ -26,9 +26,9 @@ var app = builder.Build();
 app.MapGrpcService<ServerImpl>();
 app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client.");
 
-if(app.Environment.IsDevelopment())
+/*if(app.Environment.IsDevelopment())
 {
   app.MapGrpcReflectionService();
-}
+}*/
 
 await app.RunAsync();
