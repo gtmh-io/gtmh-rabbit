@@ -141,6 +141,19 @@ public class ListenerTests : MQUnitTests
     }
   }
   [Test]
+  public async ValueTask MultipleListenSameTopicThrows()
+  {
+    var topology = new UTDefaultTopology<Msg>();
+    var srcFact = new RabbitStreamSourceFactory<Msg>(RF, topology, MsgSrcLog.Object);
+    var l = new Listener<Msg>();
+    var src = await srcFact.CreateSource();
+    await using(src)
+    {
+      await src.AddListenerAsync("a", l);
+      await Assert.ThrowsAsync<ArgumentException>(async ()=>await src.AddListenerAsync("a", l) );
+    }
+  }
+  [Test]
   public async ValueTask TestListenerThrows()
   {
     var topology = new UTDefaultTopology<Msg>();
