@@ -10,6 +10,34 @@ namespace GTMH.Rabbit.UnitTests;
 public class ListenerTests : MQUnitTests
 {
   [Test]
+  public async ValueTask TestListenerMultipleSubscribe()
+  {
+    var topology = new UTDefaultTopology<Msg>();
+    var srcFact = new RabbitStreamSourceFactory<Msg>(RF, topology, MsgSrcLog.Object);
+    var sinkFact = new RabbitStreamSinkFactory<Msg>(RF, topology, MsgSinkLog.Object);
+
+    var l = new Listener<Msg>();
+    var src = await srcFact.CreateSource();
+    await using(src)
+    {
+      await src.AddListenerAsync("a", l);
+      await src.AddListenerAsync("b", l);
+      var sink = await sinkFact.CreateSink();
+      await using(sink)
+      {
+        await sink.PublishAsync("a", Msg.New());
+        await sink.PublishAsync("b", Msg.New());
+        await Task.Delay(WaitRabbitDispatch);
+        await Assert.That(l.Recvd.Count).IsEqualTo(2);
+
+        await src.RemoveListenerAsync("b", l);
+        await sink.PublishAsync("a", Msg.New());
+        await Task.Delay(WaitRabbitDispatch);
+        await Assert.That(l.Recvd.Count).IsEqualTo(3);
+      }
+    }
+  }
+  [Test]
   public async ValueTask TestSubscriptions()
   {
     var topology = new UTDefaultTopology<Msg>();
