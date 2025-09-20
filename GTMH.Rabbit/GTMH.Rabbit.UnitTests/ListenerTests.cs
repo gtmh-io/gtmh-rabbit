@@ -13,8 +13,8 @@ public class ListenerTests : MQUnitTests
   public async ValueTask TestListenerMultipleSubscribe()
   {
     var topology = new UTDefaultTopology<Msg>();
-    var srcFact = new RabbitStreamSourceFactory<Msg>(RF, topology, MsgSrcLog.Object);
-    var sinkFact = new RabbitStreamSinkFactory<Msg>(RF, topology, MsgSinkLog.Object);
+    var srcFact = new RabbitStreamSourceFactory_t<Msg>(RF, topology, MsgSrcLog.Object);
+    var sinkFact = new RabbitStreamSinkFactory_t<Msg>(RF, topology, MsgSinkLog.Object);
 
     var l = new Listener<Msg>();
     var src = await srcFact.CreateSource();
@@ -45,8 +45,8 @@ public class ListenerTests : MQUnitTests
   public async ValueTask TestSubscriptions()
   {
     var topology = new UTDefaultTopology<Msg>();
-    var srcFact = new RabbitStreamSourceFactory<Msg>(RF, topology, MsgSrcLog.Object);
-    var sinkFact = new RabbitStreamSinkFactory<Msg>(RF, topology, MsgSinkLog.Object);
+    var srcFact = new RabbitStreamSourceFactory_t<Msg>(RF, topology, MsgSrcLog.Object);
+    var sinkFact = new RabbitStreamSinkFactory_t<Msg>(RF, topology, MsgSinkLog.Object);
     var listener_a1 = new Listener<Msg>();
     var listener_a2 = new Listener<Msg>();
     var listener_b = new Listener<Msg>();
@@ -82,8 +82,8 @@ public class ListenerTests : MQUnitTests
   public async ValueTask TestSubscriptionEmptyNull()
   {
     var topology = new UTDefaultTopology<Msg>();
-    var srcFact = new RabbitStreamSourceFactory<Msg>(RF, topology, MsgSrcLog.Object);
-    var sinkFact = new RabbitStreamSinkFactory<Msg>(RF, topology, MsgSinkLog.Object);
+    var srcFact = new RabbitStreamSourceFactory_t<Msg>(RF, topology, MsgSrcLog.Object);
+    var sinkFact = new RabbitStreamSinkFactory_t<Msg>(RF, topology, MsgSinkLog.Object);
     var l_wild_empty = new Listener<Msg>();
     var l_a = new Listener<Msg>();
     var l_wild_explicit = new Listener<Msg>();
@@ -121,8 +121,8 @@ public class ListenerTests : MQUnitTests
   public async ValueTask TestSubscriptionNullIsWild()
   {
     var topology = new UTDefaultTopology<Msg>();
-    var srcFact = new RabbitStreamSourceFactory<Msg>(RF, topology, MsgSrcLog.Object);
-    var sinkFact = new RabbitStreamSinkFactory<Msg>(RF, topology, MsgSinkLog.Object);
+    var srcFact = new RabbitStreamSourceFactory_t<Msg>(RF, topology, MsgSrcLog.Object);
+    var sinkFact = new RabbitStreamSinkFactory_t<Msg>(RF, topology, MsgSinkLog.Object);
     var l_null = new Listener<Msg>();
     var l_empty = new Listener<Msg>();
     var src = await srcFact.CreateSource();
@@ -144,7 +144,7 @@ public class ListenerTests : MQUnitTests
   public async ValueTask MultipleListenSameTopicThrows()
   {
     var topology = new UTDefaultTopology<Msg>();
-    var srcFact = new RabbitStreamSourceFactory<Msg>(RF, topology, MsgSrcLog.Object);
+    var srcFact = new RabbitStreamSourceFactory_t<Msg>(RF, topology, MsgSrcLog.Object);
     var l = new Listener<Msg>();
     var src = await srcFact.CreateSource();
     await using(src)
@@ -157,8 +157,8 @@ public class ListenerTests : MQUnitTests
   public async ValueTask TestListenerThrows()
   {
     var topology = new UTDefaultTopology<Msg>();
-    var srcFact = new RabbitStreamSourceFactory<Msg>(RF, topology, MsgSrcLog.Object);
-    var sinkFact = new RabbitStreamSinkFactory<Msg>(RF, topology, MsgSinkLog.Object);
+    var srcFact = new RabbitStreamSourceFactory_t<Msg>(RF, topology, MsgSrcLog.Object);
+    var sinkFact = new RabbitStreamSinkFactory_t<Msg>(RF, topology, MsgSinkLog.Object);
     var l = new Listener<Msg>();
     var src = await srcFact.CreateSource();
     await using(src)

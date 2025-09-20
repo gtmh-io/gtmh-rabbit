@@ -8,10 +8,17 @@ using System.Text;
 
 namespace GTMH.Rabbit.Impl
 {
-  public class RabbitStreamSinkFactory<M> : IMessageStreamSinkFactory<M>
+  public class RabbitStreamSinkFactory
+  {
+    public static IMessageStreamSinkFactory<M> Create<M>(IRabbitFactory a_Rabbit, IMQTopology<M> a_Topology, ILogger<RabbitStreamSinkFactory_t<M>>? a_Logger = null)
+    {
+      return new RabbitStreamSinkFactory_t<M>(a_Rabbit, a_Topology, a_Logger);
+    }
+  }
+  public class RabbitStreamSinkFactory_t<M> : IMessageStreamSinkFactory<M>
   {
     RabbitInstance<M> m_Rabbit; 
-    public RabbitStreamSinkFactory(IRabbitFactory a_Rabbit, IMQTopology<M> a_Topology, ILogger<RabbitStreamSinkFactory<M>> ? a_Logger = null)
+    public RabbitStreamSinkFactory_t(IRabbitFactory a_Rabbit, IMQTopology<M> a_Topology, ILogger<RabbitStreamSinkFactory_t<M>> ? a_Logger = null)
     {
       m_Rabbit = new RabbitInstance<M>(a_Rabbit, a_Topology, a_Logger??new NullStreamFactoryLogger());
     }
@@ -42,7 +49,7 @@ namespace GTMH.Rabbit.Impl
         await Connection.Channel.BasicPublishAsync(Connection.Topology.ExchangeName, a_RoutingKey, mandatory:false, payload, a_Cancel);
       }
     }
-    class NullStreamFactoryLogger : ILogger<RabbitStreamSinkFactory<M>>
+    class NullStreamFactoryLogger : ILogger<RabbitStreamSinkFactory_t<M>>
     {
       public IDisposable? BeginScope<TState>(TState state) where TState : notnull =>null;
       public bool IsEnabled(LogLevel logLevel) => false;

@@ -12,12 +12,19 @@ using System.Text;
 
 namespace GTMH.Rabbit.Impl
 {
-  public class RabbitStreamSourceFactory<M> : IMessageStreamSourceFactory<M> 
+  public static class RabbitStreamSourceFactory
+  {
+    public static RabbitStreamSourceFactory_t<M> Create<M>(IRabbitFactory a_Rabbit, IMQTopology<M> a_Topology, ILogger<RabbitStreamSourceFactory_t<M>>? a_Logger = null)
+    {
+      return new RabbitStreamSourceFactory_t<M>(a_Rabbit, a_Topology, a_Logger);
+    }
+  }
+  public class RabbitStreamSourceFactory_t<M> : IMessageStreamSourceFactory<M> 
   {
     RabbitInstance<M> m_Rabbit;
-    private readonly ILogger<RabbitStreamSourceFactory<M>> Log;
+    private readonly ILogger<RabbitStreamSourceFactory_t<M>> Log;
 
-    public RabbitStreamSourceFactory(IRabbitFactory a_Rabbit, IMQTopology<M> a_Topology, ILogger<RabbitStreamSourceFactory<M>> ? a_Logger = null)
+    public RabbitStreamSourceFactory_t(IRabbitFactory a_Rabbit, IMQTopology<M> a_Topology, ILogger<RabbitStreamSourceFactory_t<M>> ? a_Logger = null)
     {
       var logger = a_Logger ?? new NullStreamFactoryLogger();
       m_Rabbit = new RabbitInstance<M>(a_Rabbit, a_Topology, logger);
@@ -155,7 +162,7 @@ namespace GTMH.Rabbit.Impl
         }
       }
     }
-    class NullStreamFactoryLogger : ILogger<RabbitStreamSourceFactory<M>>
+    class NullStreamFactoryLogger : ILogger<RabbitStreamSourceFactory_t<M>>
     {
       public IDisposable? BeginScope<TState>(TState state) where TState : notnull=>null;
       public bool IsEnabled(LogLevel logLevel)=>false;

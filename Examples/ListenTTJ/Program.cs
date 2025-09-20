@@ -17,7 +17,7 @@ Console.WriteLine($"Connecting to {rabbit.HostIdentity} {with_without} a passwor
 
 
 using var cts = new CancellationTokenSource();
-var sourceFactory = new RabbitStreamSourceFactory<TTJMessage>(rabbit, new LegacyTopology<TTJMessage>("tofye.ttj"));
+var sourceFactory = new RabbitStreamSourceFactory_t<TTJMessage>(rabbit, new LegacyTopology<TTJMessage>("tofye.ttj"));
 var source = await sourceFactory.CreateSource(cts.Token);
 await using(source)
 {

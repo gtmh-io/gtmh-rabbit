@@ -3,6 +3,7 @@ using GrpcCommon;
 using GrpcWorkerService;
 
 using GTMH.GRPC.Discovery;
+using GTMH.Security;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -14,6 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddGrpc();
 builder.Services.AddHostedService<Worker>();
 builder.AddDiscoveryConfig();
+builder.Services.AddSingleton<IDecryptor, PlainText>();
 builder.Services.AddSingleton<IDiscoveryService<HelloWorld.HelloWorldClient>, HelloWorldDiscoverable>();
 builder.Services.AddSingleton<ServerImpl>();
 

@@ -28,7 +28,7 @@ public static class Program
     Console.WriteLine($"Running as producer@{rabbit.HostIdentity} hit enter to quit...");
     using var cts = new CancellationTokenSource();
 
-    var sinkfactory = new RabbitStreamSinkFactory<HelloWorldMsg>(rabbit, TransientQueueTopology.Create<HelloWorldMsg>());
+    var sinkfactory = new RabbitStreamSinkFactory_t<HelloWorldMsg>(rabbit, TransientQueueTopology.Create<HelloWorldMsg>());
     var sink = await sinkfactory.CreateSink(cts.Token);
     await using(sink)
     {
@@ -59,7 +59,7 @@ public static class Program
   {
     Console.WriteLine($"Running as consumer@{rabbit.HostIdentity} hit enter to quit...");
     using var cts = new CancellationTokenSource();
-    var sourceFactory = new RabbitStreamSourceFactory<HelloWorldMsg>(rabbit, TransientQueueTopology.Create<HelloWorldMsg>());
+    var sourceFactory = new RabbitStreamSourceFactory_t<HelloWorldMsg>(rabbit, TransientQueueTopology.Create<HelloWorldMsg>());
     var source = await sourceFactory.CreateSource(cts.Token);
     await using(source)
     {

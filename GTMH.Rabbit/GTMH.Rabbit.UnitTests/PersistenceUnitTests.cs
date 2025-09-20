@@ -22,8 +22,8 @@ namespace GTMH.Rabbit.UnitTests
     public async ValueTask TestPersistenceNotPersistent()
     {
       var topology = new UTTransientQueueTopology<Msg>();
-      var transientFact = new RabbitStreamSourceFactory<Msg>(RF, topology, MsgSrcLog.Object);
-      var sinkFact = new RabbitStreamSinkFactory<Msg>(RF, topology, MsgSinkLog.Object);
+      var transientFact = new RabbitStreamSourceFactory_t<Msg>(RF, topology, MsgSrcLog.Object);
+      var sinkFact = new RabbitStreamSinkFactory_t<Msg>(RF, topology, MsgSinkLog.Object);
       var l = new Listener<Msg>();
       var sink = await sinkFact.CreateSink();
       await using(sink)
@@ -63,8 +63,8 @@ namespace GTMH.Rabbit.UnitTests
     public async ValueTask TestPersistenceIs()
     {
       var topology = new UTPersistentQueueTopology<Msg>();
-      var srcFact = new RabbitStreamSourceFactory<Msg>(RF, topology, MsgSrcLog.Object);
-      var sinkFact = new RabbitStreamSinkFactory<Msg>(RF, topology, MsgSinkLog.Object);
+      var srcFact = new RabbitStreamSourceFactory_t<Msg>(RF, topology, MsgSrcLog.Object);
+      var sinkFact = new RabbitStreamSinkFactory_t<Msg>(RF, topology, MsgSinkLog.Object);
       var l = new Listener<Msg>();
       var sink = await sinkFact.CreateSink();
       await using(sink)
@@ -97,8 +97,8 @@ namespace GTMH.Rabbit.UnitTests
     public async ValueTask TestPersistenceSubOptimal()
     {
       var topology = new UTPersistentQueueTopology<Msg>();
-      var srcFact = new RabbitStreamSourceFactory<Msg>(RF, topology, MsgSrcLog.Object);
-      var sinkFact = new RabbitStreamSinkFactory<Msg>(RF, topology, MsgSinkLog.Object);
+      var srcFact = new RabbitStreamSourceFactory_t<Msg>(RF, topology, MsgSrcLog.Object);
+      var sinkFact = new RabbitStreamSinkFactory_t<Msg>(RF, topology, MsgSinkLog.Object);
       var l1 = new Listener<Msg>();
       var l2 = new Listener<Msg>();
       var sink = await sinkFact.CreateSink();

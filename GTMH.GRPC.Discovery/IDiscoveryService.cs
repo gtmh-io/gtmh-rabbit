@@ -11,6 +11,6 @@ namespace GTMH.GRPC.Discovery
   {
     IServer Server { get; }
     IHostApplicationLifetime HAL { get; }
-    Task<ServerPublication> Publish();
+    Task<IAsyncDisposable> Publish(CancellationToken stoppingToken);
   }
 }

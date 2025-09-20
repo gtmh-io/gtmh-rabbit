@@ -27,17 +27,17 @@ public class TestMQReEntrant : MQUnitTests
     }
     public ManualResetEvent m_Subscribed = new ManualResetEvent(false);
     public ManualResetEvent m_ReceivedR = new ManualResetEvent(false);
-    private RabbitStreamSourceFactory<MsgR> srcFact_r;
-    private RabbitStreamSinkFactory<MsgR> sinkFact_r;
+    private RabbitStreamSourceFactory_t<MsgR> srcFact_r;
+    private RabbitStreamSinkFactory_t<MsgR> sinkFact_r;
     private IMessageStreamSource<MsgR> ? src_r;
     private IMessageStreamSink<MsgR> ? sink_r;
 
     public ListenerL(RabbitFactory RF, IMQTopology<MsgR> topology_r)
     {
-      Mock<ILogger<RabbitStreamSourceFactory<MsgR>>> MsgSrcLog_r = new();
-      Mock<ILogger<RabbitStreamSinkFactory<MsgR>>> MsgSinkLog_r = new();
-      this.srcFact_r = new RabbitStreamSourceFactory<MsgR>(RF, topology_r, MsgSrcLog_r.Object);
-      this.sinkFact_r = new RabbitStreamSinkFactory<MsgR>(RF, topology_r, MsgSinkLog_r.Object);
+      Mock<ILogger<RabbitStreamSourceFactory_t<MsgR>>> MsgSrcLog_r = new();
+      Mock<ILogger<RabbitStreamSinkFactory_t<MsgR>>> MsgSinkLog_r = new();
+      this.srcFact_r = new RabbitStreamSourceFactory_t<MsgR>(RF, topology_r, MsgSrcLog_r.Object);
+      this.sinkFact_r = new RabbitStreamSinkFactory_t<MsgR>(RF, topology_r, MsgSinkLog_r.Object);
     }
 
     public bool Subscribed => m_Subscribed.WaitOne(0);
@@ -109,14 +109,14 @@ public class TestMQReEntrant : MQUnitTests
   [Test]
   public async ValueTask TestRentrancy()
   {
-    Mock<ILogger<RabbitStreamSourceFactory<ListenerL.Msg>>> MsgSrcLog_l = new();
-    Mock<ILogger<RabbitStreamSinkFactory<ListenerL.Msg>>> MsgSinkLog_l = new();
-    Mock<ILogger<RabbitStreamSinkFactory<MsgR>>> MsgSinkLog_r = new();
+    Mock<ILogger<RabbitStreamSourceFactory_t<ListenerL.Msg>>> MsgSrcLog_l = new();
+    Mock<ILogger<RabbitStreamSinkFactory_t<ListenerL.Msg>>> MsgSinkLog_l = new();
+    Mock<ILogger<RabbitStreamSinkFactory_t<MsgR>>> MsgSinkLog_r = new();
     var topology_l = new UTDefaultTopology<ListenerL.Msg>();
     var topology_r = new UTDefaultTopology<MsgR>();
-    var srcFact_l = new RabbitStreamSourceFactory<ListenerL.Msg>(RF, topology_l, MsgSrcLog_l.Object);
-    var sinkFact_l = new RabbitStreamSinkFactory<ListenerL.Msg>(RF, topology_l, MsgSinkLog_l.Object);
-    var sinkFact_r = new RabbitStreamSinkFactory<MsgR>(RF, topology_r, MsgSinkLog_r.Object);
+    var srcFact_l = new RabbitStreamSourceFactory_t<ListenerL.Msg>(RF, topology_l, MsgSrcLog_l.Object);
+    var sinkFact_l = new RabbitStreamSinkFactory_t<ListenerL.Msg>(RF, topology_l, MsgSinkLog_l.Object);
+    var sinkFact_r = new RabbitStreamSinkFactory_t<MsgR>(RF, topology_r, MsgSinkLog_r.Object);
     var src_l = await srcFact_l.CreateSource();
     await using(src_l)
     {
