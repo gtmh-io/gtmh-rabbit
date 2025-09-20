@@ -7,6 +7,7 @@
     <Nullable>enable</Nullable>
     <OutputPath>vsbin/$(Configuration)</OutputPath>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,6 +21,11 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\GTMH.GRPC.Discovery\GTMH.GRPC.Discovery.csproj" />
+    <ProjectReference Include="..\..\..\GTMH.GRPC.Discovery.CodeGen\GTMH.GRPC.Discovery.CodeGen.csproj"  ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
   </ItemGroup>
 
 </Project>
