@@ -1,4 +1,8 @@
+using GrpcCommon;
+
 using GrpcWorkerService;
+
+using GTMH.GRPC.Discovery;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -8,8 +12,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Configure services
 builder.Services.AddGrpc();
-//builder.Services.AddGrpcReflection();
 builder.Services.AddHostedService<Worker>();
+builder.AddDiscoveryConfig();
+builder.Services.AddSingleton<IDiscoveryService<HelloWorld.HelloWorldClient>, HelloWorldDiscoverable>();
+builder.Services.AddSingleton<ServerImpl>();
 
 // Configure Kestrel
 builder.WebHost.ConfigureKestrel(options =>
@@ -26,9 +32,8 @@ var app = builder.Build();
 app.MapGrpcService<ServerImpl>();
 app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client.");
 
-/*if(app.Environment.IsDevelopment())
+var publication = await app.Services.GetRequiredService<ServerImpl>().Publish();
+await using(publication)
 {
-  app.MapGrpcReflectionService();
-}*/
-
-await app.RunAsync();
+  await app.RunAsync();
+}

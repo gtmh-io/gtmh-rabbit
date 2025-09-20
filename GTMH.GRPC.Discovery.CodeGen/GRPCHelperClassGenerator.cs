@@ -22,7 +22,7 @@ namespace GTMH.GRPC.Discovery.CodeGen
       context.RegisterSourceOutput(defns, (spc, source) => Write((DiscoverableDefn)source, spc)); // filtered for null above
     }
 
-    static Regex REDiscoverableBase= new Regex("GTMH.GRPC.Discovery.Discoverable<(.*)Client>");
+    static Regex REDiscoverableBase= new Regex(@"GTMH.GRPC.Discovery.Discoverable<(.*)Client>");
     private static bool FastFilterTarget(SyntaxNode node)
     {
       var cls = node as ClassDeclarationSyntax;
@@ -171,9 +171,26 @@ namespace GTMH.GRPC.Discovery.CodeGen
       }
       code.WriteLine($"{a_Defn.Visibility} partial class {a_Defn.DiscoverableClass}");
       code.WriteLine("{");
+      using(code.Indent())
+      {
+        code.WriteLine($"public override string DiscoverableType=>\"{a_Defn.DiscoverableType}\";");
+        WriteConstructors(a_Defn, code);
 
+        code.WriteLine($"public Task<{a_Defn.DiscoverableType}Client> GetClient()");
+        code.WriteLine("{");
+        using(code.Indent())
+        {
+          code.WriteLine("throw new NotImplementedException();");
+        }
+        code.WriteLine("}");
+      }
       code.WriteLine("}");
       a_Compiler.AddSource($"{a_Defn.DiscoverableClass}.g.cs", code.ToString());
+    }
+
+    private static void WriteConstructors(DiscoverableDefn a_Defn, Code code)
+    {
+      code.WriteLine($"public {a_Defn.DiscoverableClass}(Microsoft.AspNetCore.Hosting.Server.IServer a_Server, Microsoft.Extensions.Hosting.IHostApplicationLifetime a_HAL) : base(a_Server, a_HAL) {{ }}");
     }
   }
 }
