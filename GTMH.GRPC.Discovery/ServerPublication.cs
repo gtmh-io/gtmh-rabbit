@@ -12,12 +12,12 @@ namespace GTMH.GRPC.Discovery
 
     public ValueTask DisposeAsync()
     {
-      throw new NotImplementedException();
+      return ValueTask.CompletedTask;
     }
 
     internal Task Publish()
     {
-      throw new NotImplementedException();
+      return Task.CompletedTask;
     }
   }
 }

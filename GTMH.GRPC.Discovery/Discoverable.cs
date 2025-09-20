@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ namespace GTMH.GRPC.Discovery
 
     public abstract string DiscoverableType { get; }
 
-    public Discoverable(IServer a_Server, IHostApplicationLifetime a_HAL)
+    public Discoverable(IServer a_Server, IHostApplicationLifetime a_HAL, IOptions<DiscoveryConfig> a_Config)
     {
       this.Server = a_Server;
       this.HAL = a_HAL;

@@ -15,7 +15,7 @@ builder.Services.AddGrpc();
 builder.Services.AddHostedService<Worker>();
 builder.AddDiscoveryConfig();
 builder.Services.AddSingleton<IDiscoveryService<HelloWorld.HelloWorldClient>, HelloWorldDiscoverable>();
-builder.Services.AddSingleton<ServerImpl>();
+builder.Services.AddHostedService<ServerImpl>();
 
 // Configure Kestrel
 builder.WebHost.ConfigureKestrel(options =>
@@ -32,8 +32,4 @@ var app = builder.Build();
 app.MapGrpcService<ServerImpl>();
 app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client.");
 
-var publication = await app.Services.GetRequiredService<ServerImpl>().Publish();
-await using(publication)
-{
-  await app.RunAsync();
-}
+await app.RunAsync();

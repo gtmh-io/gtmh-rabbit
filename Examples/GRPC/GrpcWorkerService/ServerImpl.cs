@@ -6,26 +6,38 @@ using GTMH.GRPC.Discovery;
 
 namespace GrpcWorkerService;
 
-public class ServerImpl : HelloWorld.HelloWorldBase
+public class ServerImpl : HelloWorld.HelloWorldBase, IHostedService
 {
-  private readonly ILogger<ServerImpl> _logger;
+  private readonly ILogger<ServerImpl> Log;
   private readonly IDiscoveryService<HelloWorld.HelloWorldClient> Discovery;
+  private IAsyncDisposable ? m_Publication;
 
   public ServerImpl(ILogger<ServerImpl> logger, IDiscoveryService<HelloWorld.HelloWorldClient> a_Discovery)
   {
-    _logger = logger;
+    Log = logger;
     this.Discovery=a_Discovery;
   }
 
-  public Task<IAsyncDisposable> Publish()=>this.Discovery.Publish();
-
   public override Task<HelloReply> Introducing(HelloRequest request, ServerCallContext context)
   {
-    _logger.LogInformation($"Received request from {request.Name}");
+    Log.LogInformation($"Received request from {request.Name}");
 
     return Task.FromResult(new HelloReply
     {
       Message = $"Hello {request.Name} from gRPC Worker Service!"
     });
+  }
+
+  public async Task StartAsync(CancellationToken cancellationToken)
+  {
+    m_Publication = await Discovery.Publish();
+  }
+
+  public async Task StopAsync(CancellationToken cancellationToken)
+  {
+    if(m_Publication != null)
+    {
+      await m_Publication.DisposeAsync();
+    }
   }
 }

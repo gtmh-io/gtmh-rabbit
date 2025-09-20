@@ -190,7 +190,7 @@ namespace GTMH.GRPC.Discovery.CodeGen
 
     private static void WriteConstructors(DiscoverableDefn a_Defn, Code code)
     {
-      code.WriteLine($"public {a_Defn.DiscoverableClass}(Microsoft.AspNetCore.Hosting.Server.IServer a_Server, Microsoft.Extensions.Hosting.IHostApplicationLifetime a_HAL) : base(a_Server, a_HAL) {{ }}");
+      code.WriteLine($"public {a_Defn.DiscoverableClass}(Microsoft.AspNetCore.Hosting.Server.IServer a_Server, Microsoft.Extensions.Hosting.IHostApplicationLifetime a_HAL, Microsoft.Extensions.Options.IOptions<DiscoveryConfig> a_Config) : base(a_Server, a_HAL, a_Config) {{ }}");
     }
   }
 }
