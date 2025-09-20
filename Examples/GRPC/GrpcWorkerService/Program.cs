@@ -15,7 +15,7 @@ builder.Services.AddGrpc();
 builder.Services.AddHostedService<Worker>();
 builder.AddDiscoveryConfig();
 builder.Services.AddSingleton<IDiscoveryService<HelloWorld.HelloWorldClient>, HelloWorldDiscoverable>();
-builder.Services.AddHostedService<ServerImpl>();
+builder.Services.AddSingleton<ServerImpl>();
 
 // Configure Kestrel
 builder.WebHost.ConfigureKestrel(options =>
