@@ -8,7 +8,5 @@ using static GrpcCommon.HelloWorld;
 
 namespace GrpcCommon
 {
-  public partial class HelloWorldDiscoverable : Discoverable<HelloWorldClient>
-  {
-  }
+  public partial class HelloWorldDiscoverable : Discoverable<HelloWorldClient> { }
 }
