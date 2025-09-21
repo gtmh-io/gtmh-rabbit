@@ -37,7 +37,6 @@ namespace GTMH.GRPC.Discovery
 
     public async Task<IAsyncDisposable> Publish(CancellationToken stoppingToken)
     {
-      // TODO a timeout
       var tcs = new TaskCompletionSource();
       HAL.ApplicationStarted.Register(() => tcs.TrySetResult());
       await tcs.Task.WaitAsync(StartTimeout, stoppingToken);
