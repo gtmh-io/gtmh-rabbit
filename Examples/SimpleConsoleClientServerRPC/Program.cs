@@ -1,5 +1,6 @@
 ﻿using GTMH.IDL;
 using GTMH.Rabbit;
+using GTMH.Rabbit.Impl;
 using GTMH.Rabbit.RPC;
 
 using RabbitMQ.Client;
@@ -53,11 +54,4 @@ public static class Program
       Console.WriteLine($"RPC pleasantries... {result}");
     }
   }
-}
-
-// Because we're not using dependency injection we need this
-public class HostOnlyFactory(string a_HostName) : IRabbitFactory
-{
-  public string HostIdentity { get; } = a_HostName;
-  public IConnectionFactory Create()=>new ConnectionFactory { HostName = HostIdentity };
 }

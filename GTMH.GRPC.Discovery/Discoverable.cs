@@ -17,8 +17,8 @@ namespace GTMH.GRPC.Discovery
   {
     public IServer Server { get; private set; }
     public IHostApplicationLifetime HAL { get; private set; }
-    private readonly ILogger<IDiscoveryService<T>> Log;
-    private readonly IRabbitFactory m_Rabbit;
+    private readonly ILogger Log;
+    public IRabbitFactory Rabbit { get; private set; }
 
     public abstract string DiscoverableType { get; }
 
@@ -27,7 +27,7 @@ namespace GTMH.GRPC.Discovery
       this.Server = a_Server;
       this.HAL = a_HAL;
       this.Log=a_Log;
-      m_Rabbit = new RabbitFactory(a_Config.Value.Transport, a_Decryptor);
+      Rabbit = new RabbitFactory(a_Config.Value.Transport, a_Decryptor);
     }
 
     public async Task<IAsyncDisposable> Publish(CancellationToken stoppingToken)
@@ -42,9 +42,25 @@ namespace GTMH.GRPC.Discovery
       else if(!saf.Addresses.Any()) throw new DiscoveryException("Server has empty addresses");
 
       var first = saf.Addresses.First();
-      var rval = new ServerPublication(this.DiscoverableType, Log, m_Rabbit, first, saf.Addresses.Skip(1).ToArray());
+      var rval = new ServerPublication(this.DiscoverableType, Log, Rabbit, first, saf.Addresses.Skip(1).ToArray());
 
       return await rval.Register(stoppingToken);
+    }
+    protected class Listener : IMessageStreamListener<DiscoveryResponse>
+    {
+      public TaskCompletionSource<string> URI { get; private set; } = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
+      public ValueTask OnReceivedAsync(DiscoveryResponse a_Msg)
+      {
+        URI.SetResult(a_Msg.URI);
+        return ValueTask.CompletedTask;
+      }
+    }
+    private class NullLog : ILogger
+    {
+      public IDisposable? BeginScope<TState>(TState state) where TState : notnull =>null;
+
+      public bool IsEnabled(LogLevel logLevel) => false;
+      public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter) { }
     }
   }
 }

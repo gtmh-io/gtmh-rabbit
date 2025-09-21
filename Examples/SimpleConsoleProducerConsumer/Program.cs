@@ -27,8 +27,7 @@ public static class Program
   {
     Console.WriteLine($"Running as producer@{rabbit.HostIdentity} hit enter to quit...");
     using var cts = new CancellationTokenSource();
-
-    var sinkfactory = new RabbitStreamSinkFactory_t<HelloWorldMsg>(rabbit, TransientQueueTopology.Create<HelloWorldMsg>());
+    var sinkfactory = RabbitStreamSinkFactory.Create(rabbit, TransientQueueTopology.Create<HelloWorldMsg>());
     var sink = await sinkfactory.CreateSink(cts.Token);
     await using(sink)
     {
@@ -68,11 +67,4 @@ public static class Program
       cts.Cancel();
     }
   }
-}
-
-// Because we're not using dependency injection we need this
-public class HostOnlyFactory(string a_HostName) : IRabbitFactory
-{
-  public string HostIdentity { get; } = a_HostName;
-  public IConnectionFactory Create()=>new ConnectionFactory { HostName = HostIdentity };
 }

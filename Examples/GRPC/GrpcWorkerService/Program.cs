@@ -22,7 +22,7 @@ builder.Services.AddSingleton<ServerImpl>();
 // Configure Kestrel
 builder.WebHost.ConfigureKestrel(options =>
 {
-  options.ListenAnyIP(5001, listenOptions =>
+  options.ListenAnyIP(0, listenOptions =>
   {
     listenOptions.Protocols = HttpProtocols.Http2;
   });
