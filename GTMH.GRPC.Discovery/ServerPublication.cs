@@ -79,10 +79,7 @@ namespace GTMH.GRPC.Discovery
 
       public async ValueTask OnReceivedAsync(DiscoveryRequest a_Msg)
       {
-        foreach(var address in this.Addresses)
-        {
-          await m_Sink.PublishAsync(DiscoverableType, new DiscoveryResponse(address));
-        }
+        await m_Sink.PublishAsync(DiscoverableType, new DiscoveryResponse(Addresses));
       }
     }
   }

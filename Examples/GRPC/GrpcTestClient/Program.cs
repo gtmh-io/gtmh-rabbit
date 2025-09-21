@@ -12,7 +12,7 @@ if(uri == null)
 else
 {
   // Create a channel
-  using var channel = GrpcChannel.ForAddress(uri);
+  using var channel = GrpcChannel.ForAddress(uri[0]);
   var client = new HelloWorld.HelloWorldClient(channel);
 
   // Unary call

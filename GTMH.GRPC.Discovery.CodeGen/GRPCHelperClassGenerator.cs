@@ -187,7 +187,7 @@ namespace GTMH.GRPC.Discovery.CodeGen
     }
     private static void WriteGetClient(DiscoverableDefn a_Defn, Code code)
     {
-      code.WriteLine($"public static async Task<string?> {a_Defn.ClientMethodName}(IRabbitFactory a_Rabbit, CancellationToken a_Cancel, Microsoft.Extensions.Logging.ILogger ? a_Logger = null)");
+      code.WriteLine($"public static async Task<string[]?> {a_Defn.ClientMethodName}(IRabbitFactory a_Rabbit, CancellationToken a_Cancel, Microsoft.Extensions.Logging.ILogger ? a_Logger = null)");
       code.WriteLine("{");
       using(code.Indent())
       {

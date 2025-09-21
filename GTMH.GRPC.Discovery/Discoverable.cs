@@ -20,10 +20,9 @@ namespace GTMH.GRPC.Discovery
     public IHostApplicationLifetime HAL { get; private set; }
     private readonly ILogger Log;
     private readonly IAddressResolver AddressResolution;
-
     public IRabbitFactory Rabbit { get; private set; }
-
     public abstract string DiscoverableType { get; }
+    private readonly TimeSpan StartTimeout;
 
     public Discoverable(IServer a_Server, IHostApplicationLifetime a_HAL, IOptions<DiscoveryConfig> a_Config, ILogger<IDiscoveryService<T>> a_Log, IDecryptor a_Decryptor) : this(a_Server, a_HAL, a_Config, a_Log, a_Decryptor, new NoAddressResolution()) { }
     public Discoverable(IServer a_Server, IHostApplicationLifetime a_HAL, IOptions<DiscoveryConfig> a_Config, ILogger<IDiscoveryService<T>> a_Log, IDecryptor a_Decryptor, IAddressResolver a_Resolver)
@@ -33,6 +32,7 @@ namespace GTMH.GRPC.Discovery
       this.Log=a_Log;
       this.AddressResolution = a_Resolver;
       Rabbit = new RabbitFactory(a_Config.Value.Transport, a_Decryptor);
+      StartTimeout = TimeSpan.FromMilliseconds(a_Config.Value.StartTimeout);
     }
 
     public async Task<IAsyncDisposable> Publish(CancellationToken stoppingToken)
@@ -40,7 +40,7 @@ namespace GTMH.GRPC.Discovery
       // TODO a timeout
       var tcs = new TaskCompletionSource();
       HAL.ApplicationStarted.Register(() => tcs.TrySetResult());
-      await tcs.Task;
+      await tcs.Task.WaitAsync(StartTimeout, stoppingToken);
       var saf = Server.Features.Get<IServerAddressesFeature>();
       if(saf == null) throw new DiscoveryException("Failed to find IServerAddressesFeature");
       else if(saf.Addresses == null) throw new DiscoveryException("Failed to find published addresses");
@@ -55,7 +55,7 @@ namespace GTMH.GRPC.Discovery
     }
     protected class Listener : IMessageStreamListener<DiscoveryResponse>
     {
-      public TaskCompletionSource<string> URI { get; private set; } = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
+      public TaskCompletionSource<string[]> URI { get; private set; } = new TaskCompletionSource<string[]>(TaskCreationOptions.RunContinuationsAsynchronously);
       public ValueTask OnReceivedAsync(DiscoveryResponse a_Msg)
       {
         URI.SetResult(a_Msg.URI);

@@ -10,7 +10,7 @@ namespace GTMH.GRPC.Discovery
   public class DiscoveryResponse
   {
     [ProtoMember(10)]
-    public string URI { get; set; }
-    public DiscoveryResponse(string a_URI ) { URI = a_URI; }
+    public string [] URI { get; set; }
+    public DiscoveryResponse(string [] a_URI ) { URI = a_URI; }
   }
 }

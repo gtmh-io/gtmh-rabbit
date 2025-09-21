@@ -11,5 +11,6 @@ namespace GTMH.GRPC.Discovery
   {
     [Required]
     public required RabbitConfig Transport { get; set; }
+    public long StartTimeout { get; set; } = 30000;
   }
 }
