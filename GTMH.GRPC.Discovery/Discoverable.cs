@@ -1,4 +1,5 @@
-﻿using GTMH.Rabbit;
+﻿using GTMH.GRPC.Discovery.AddressResolution;
+using GTMH.Rabbit;
 using GTMH.Security;
 
 using Microsoft.AspNetCore.Hosting.Server;
@@ -18,15 +19,19 @@ namespace GTMH.GRPC.Discovery
     public IServer Server { get; private set; }
     public IHostApplicationLifetime HAL { get; private set; }
     private readonly ILogger Log;
+    private readonly IAddressResolver AddressResolution;
+
     public IRabbitFactory Rabbit { get; private set; }
 
     public abstract string DiscoverableType { get; }
 
-    public Discoverable(IServer a_Server, IHostApplicationLifetime a_HAL, IOptions<DiscoveryConfig> a_Config, ILogger<IDiscoveryService<T>> a_Log, IDecryptor a_Decryptor)
+    public Discoverable(IServer a_Server, IHostApplicationLifetime a_HAL, IOptions<DiscoveryConfig> a_Config, ILogger<IDiscoveryService<T>> a_Log, IDecryptor a_Decryptor) : this(a_Server, a_HAL, a_Config, a_Log, a_Decryptor, new NoAddressResolution()) { }
+    public Discoverable(IServer a_Server, IHostApplicationLifetime a_HAL, IOptions<DiscoveryConfig> a_Config, ILogger<IDiscoveryService<T>> a_Log, IDecryptor a_Decryptor, IAddressResolver a_Resolver)
     {
       this.Server = a_Server;
       this.HAL = a_HAL;
       this.Log=a_Log;
+      this.AddressResolution = a_Resolver;
       Rabbit = new RabbitFactory(a_Config.Value.Transport, a_Decryptor);
     }
 
@@ -41,8 +46,10 @@ namespace GTMH.GRPC.Discovery
       else if(saf.Addresses == null) throw new DiscoveryException("Failed to find published addresses");
       else if(!saf.Addresses.Any()) throw new DiscoveryException("Server has empty addresses");
 
-      var first = saf.Addresses.First();
-      var rval = new ServerPublication(this.DiscoverableType, Log, Rabbit, first, saf.Addresses.Skip(1).ToArray());
+      var addresses = saf.Addresses.Select(_=>AddressResolution.Resolve(_)).Distinct();
+
+      var first = addresses.First();
+      var rval = new ServerPublication(this.DiscoverableType, Log, Rabbit, first, addresses.Skip(1).ToArray());
 
       return await rval.Register(stoppingToken);
     }

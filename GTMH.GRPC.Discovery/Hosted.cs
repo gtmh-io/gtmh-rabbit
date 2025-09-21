@@ -9,12 +9,13 @@ namespace GTMH.GRPC.Discovery
 {
   public static class Hosted
   {
-    public static IHostApplicationBuilder AddDiscoveryConfig(this IHostApplicationBuilder builder)
+    public static IHostApplicationBuilder AddDiscovery<T>(this IHostApplicationBuilder builder) where T :  class, IAddressResolver
     {
       builder.Services.AddOptions<DiscoveryConfig>()
         .Bind(builder.Configuration.GetSection(nameof(DiscoveryConfig)))
         .ValidateDataAnnotations()
         .ValidateOnStart();
+      builder.Services.AddSingleton<IAddressResolver, T>();
 
       return builder;
     }

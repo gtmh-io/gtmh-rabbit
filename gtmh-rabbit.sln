@@ -55,6 +55,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GTMH.GRPC.Discovery", "GTMH
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GTMH.GRPC.Discovery.CodeGen", "GTMH.GRPC.Discovery.CodeGen\GTMH.GRPC.Discovery.CodeGen.csproj", "{BD4BCCA4-8C95-406A-965D-4EE2E69D4756}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GTMH.GRPC.Discovery.UnitTests", "GTMH.GRPC.Discovery\GTMH.GRPC.Discovery.UnitTests\GTMH.GRPC.Discovery.UnitTests.csproj", "{DFF3DD38-1593-403A-A103-F0E4C414478B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -341,6 +343,18 @@ Global
 		{BD4BCCA4-8C95-406A-965D-4EE2E69D4756}.Release|x64.Build.0 = Release|Any CPU
 		{BD4BCCA4-8C95-406A-965D-4EE2E69D4756}.Release|x86.ActiveCfg = Release|Any CPU
 		{BD4BCCA4-8C95-406A-965D-4EE2E69D4756}.Release|x86.Build.0 = Release|Any CPU
+		{DFF3DD38-1593-403A-A103-F0E4C414478B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFF3DD38-1593-403A-A103-F0E4C414478B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFF3DD38-1593-403A-A103-F0E4C414478B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DFF3DD38-1593-403A-A103-F0E4C414478B}.Debug|x64.Build.0 = Debug|Any CPU
+		{DFF3DD38-1593-403A-A103-F0E4C414478B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DFF3DD38-1593-403A-A103-F0E4C414478B}.Debug|x86.Build.0 = Debug|Any CPU
+		{DFF3DD38-1593-403A-A103-F0E4C414478B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFF3DD38-1593-403A-A103-F0E4C414478B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFF3DD38-1593-403A-A103-F0E4C414478B}.Release|x64.ActiveCfg = Release|Any CPU
+		{DFF3DD38-1593-403A-A103-F0E4C414478B}.Release|x64.Build.0 = Release|Any CPU
+		{DFF3DD38-1593-403A-A103-F0E4C414478B}.Release|x86.ActiveCfg = Release|Any CPU
+		{DFF3DD38-1593-403A-A103-F0E4C414478B}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

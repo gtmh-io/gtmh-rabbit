@@ -236,6 +236,17 @@ namespace GTMH.GRPC.Discovery.CodeGen
         code.WriteLine("Microsoft.Extensions.Hosting.IHostApplicationLifetime a_HAL,");
         code.WriteLine("Microsoft.Extensions.Options.IOptions<DiscoveryConfig> a_Config,");
         code.WriteLine($"Microsoft.Extensions.Logging.ILogger <{ a_Defn.DiscoverableClass}> a_Log,");
+        code.WriteLine("GTMH.Security.IDecryptor a_Decryptor,");
+        code.WriteLine("IAddressResolver a_AddressResolver)");
+        code.WriteLine(": base(a_Server, a_HAL, a_Config, a_Log, a_Decryptor, a_AddressResolver) { { } } ");
+       }
+      code.WriteLine($"public {a_Defn.DiscoverableClass}(");
+      using(code.Indent())
+      {
+        code.WriteLine("Microsoft.AspNetCore.Hosting.Server.IServer a_Server,");
+        code.WriteLine("Microsoft.Extensions.Hosting.IHostApplicationLifetime a_HAL,");
+        code.WriteLine("Microsoft.Extensions.Options.IOptions<DiscoveryConfig> a_Config,");
+        code.WriteLine($"Microsoft.Extensions.Logging.ILogger <{ a_Defn.DiscoverableClass}> a_Log,");
         code.WriteLine("GTMH.Security.IDecryptor a_Decryptor)");
         code.WriteLine(": base(a_Server, a_HAL, a_Config, a_Log, a_Decryptor) { { } } ");
        }
