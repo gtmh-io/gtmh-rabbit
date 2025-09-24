@@ -25,7 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\GTMH.GRPC.Discovery\GTMH.GRPC.Discovery.csproj" />
-    <ProjectReference Include="..\..\..\GTMH.GRPC.Discovery.CodeGen\GTMH.GRPC.Discovery.CodeGen.csproj"  ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+    <ProjectReference Include="..\..\..\GTMH.GRPC.Discovery.CodeGen\GTMH.GRPC.Discovery.CodeGen.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
   </ItemGroup>
 
 </Project>

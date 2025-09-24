@@ -14,9 +14,12 @@
 
   <ItemGroup>
     <Compile Remove="GTMH.GRPC.Discovery.UnitTests\**" />
+    <Compile Remove="vsbin\**" />
     <EmbeddedResource Remove="GTMH.GRPC.Discovery.UnitTests\**" />
+    <EmbeddedResource Remove="vsbin\**" />
     <None Remove="GTMH.GRPC.Discovery.UnitTests\**" />
-    <None Include="README.md" Pack="true" PackagePath="\"/>
+    <None Remove="vsbin\**" />
+    <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>
