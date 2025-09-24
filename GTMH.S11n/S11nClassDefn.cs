@@ -10,25 +10,50 @@ namespace GTMH.S11n
     public readonly string Namespace;
     public readonly string Visibility;
     public readonly string ClassName;
-    public readonly AttrData[] GTFields;
+    public readonly FieldData[] Fields;
 
-    public S11nClassDefn(List<string> a_Usings, string a_NS, string a_Visibility, string a_ClassName, List<AttrData> attrs)
+    public S11nClassDefn(List<string> a_Usings, string a_NS, string a_Visibility, string a_ClassName, List<FieldData> attrs)
     {
       this.Usings = a_Usings.ToArray();
       this.Namespace = a_NS;
       this.Visibility = a_Visibility;
       this.ClassName = a_ClassName;
-      this.GTFields = attrs.ToArray();
+      this.Fields = attrs.ToArray();
     }
 
-    public class AttrData
+    public class FieldData
     {
+      public readonly string Type;
       public readonly string Name;
-      public AttrData(string a_Name)
+      public FieldData(string a_Name, String a_Type)
       {
         Name = a_Name;
+        Type =a_Type;
       }
 
+      internal void WriteGather(Code code, string a_Args)
+      {
+        switch(Type)
+        {
+          case "String":
+          {
+            code.WriteLine($"{a_Args}.Add(\"{this.Name}\", {this.Name});");
+            break;
+          }
+        }
+      }
+
+      internal void WriteInitialisation(Code code)
+      {
+        switch(Type)
+        {
+          case "String":
+          {
+            code.WriteLine($"this.{Name}=a_Args.GetValue(\"{this.Name}\", {this.Name});");
+            break;
+          }
+        }
+      }
     }
   }
 }

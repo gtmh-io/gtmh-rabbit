@@ -20,7 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\GTMH\GTMH.csproj" />
-    <ProjectReference Include="..\GTMH.S11n.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+    <ProjectReference Include="..\GTMH.S11n.csproj" ReferenceOutputAssembly="true" OutputItemType="Analyzer" />
   </ItemGroup>
 
 </Project>

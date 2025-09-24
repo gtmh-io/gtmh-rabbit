@@ -33,6 +33,9 @@
   <ItemGroup>
     <None Remove="vsbin/Debug\netstandard2.0\\GTMH.S11n.dll" />
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="vsbin/Debug\netstandard2.0\\GTMH.S11n.dll" />
+  </ItemGroup>
 
   <!-- This ensures the library will be packaged as a source generator when we use `dotnet pack` -->
   <ItemGroup>

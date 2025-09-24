@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -15,6 +16,7 @@ namespace GTMH.S11n
   {
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
+      //System.Diagnostics.Debugger.Launch();
       IncrementalValuesProvider<S11nClassDefn> defns = context.SyntaxProvider.CreateSyntaxProvider(
         predicate: (node, cancelToken)=> FastFilterTarget(node),
         transform: (ctx, cancelToken)=> DeepSeekTarget(ctx)
@@ -48,7 +50,7 @@ namespace GTMH.S11n
       var classSymbol = ctx.SemanticModel.GetDeclaredSymbol(cls);
       if ( classSymbol == null ) return null;
 
-      var attrs = new List<S11nClassDefn.AttrData>();
+      var attrs = new List<S11nClassDefn.FieldData>();
 
       foreach (var member in classSymbol.GetMembers())
       {
@@ -75,9 +77,9 @@ namespace GTMH.S11n
       return new S11nClassDefn(usings, ns, GetVisibility(cls.Modifiers, cls.Parent is TypeDeclarationSyntax), classSymbol.Name, attrs);
     }
 
-    private static S11nClassDefn.AttrData ParseAttribute(IPropertySymbol property, AttributeData gtfAttr)
+    private static S11nClassDefn.FieldData ParseAttribute(IPropertySymbol property, AttributeData gtfAttr)
     {
-      return new S11nClassDefn.AttrData(property.Name);
+      return new S11nClassDefn.FieldData(property.Name, property.Type.Name);
     }
 
     private static string GetVisibility(SyntaxTokenList modifiers, bool a_IsNested)
@@ -158,6 +160,7 @@ namespace GTMH.S11n
       {
         code.WriteLine(use);
       }
+      code.WriteLine("using GTMH.S11n;");
       code.WriteLine("#pragma warning restore 0105");
 
       if(!string.IsNullOrEmpty(a_Defn.Namespace))
@@ -169,14 +172,48 @@ namespace GTMH.S11n
       using(code.Indent())
       {
         WriteConstructors(a_Defn, code);
+        WriteS11n(a_Defn, code);
       }
       code.WriteLine("}");
       code.WriteLine("#nullable restore");
       a_Compiler.AddSource($"{a_Defn.ClassName}.g.cs", code.ToString());
     }
 
+    private static void WriteS11n(S11nClassDefn a_Defn, Code code)
+    {
+      code.WriteLine("public virtual Dictionary<string,string> ParseS11n()");
+      code.WriteLine("{");
+      using(code.Indent())
+      {
+        code.WriteLine("return S11nGather(new Dictionary<string, string>());");
+      }
+      code.WriteLine("}");
+      code.WriteLine("public virtual Dictionary<string,string> S11nGather(Dictionary<string,string> a_Args)");
+      code.WriteLine("{");
+      using(code.Indent())
+      {
+        foreach(var field in a_Defn.Fields)
+        {
+          field.WriteGather(code, "a_Args");
+
+        }
+        code.WriteLine("return a_Args;");
+      }
+      code.WriteLine("}");
+    }
+
     private static void WriteConstructors(S11nClassDefn a_Defn, Code code)
     {
+      code.WriteLine($"public {a_Defn.ClassName}(IGTArgs a_Args)");
+      code.WriteLine("{");
+      using(code.Indent())
+      {
+        foreach(var attr in a_Defn.Fields)
+        {
+          attr.WriteInitialisation(code);
+        }
+      }
+      code.WriteLine("}");
     }
   }
 }
