@@ -40,6 +40,18 @@ namespace GTMH.S11n
           });
         })) return true;
       }
+      foreach(var fds in cls.Members.OfType<FieldDeclarationSyntax>().Where(field => field.AttributeLists.Any()))
+      {
+        if ( fds.AttributeLists.Any(al=>
+        {
+          return al.Attributes.Any(attr=>
+          {
+            var ins = attr.Name as IdentifierNameSyntax;
+            if ( ins ==null ) return false;
+            return ins.Identifier.ValueText=="GTField";
+          });
+        })) return true;
+      }
       return false;
     }
 
@@ -61,6 +73,14 @@ namespace GTMH.S11n
           if(gtfAttr != null)
           {
             attrs.Add(ParseAttribute(property, gtfAttr));
+          }
+        }
+        else if( member is IFieldSymbol symbol)
+        {
+          var gtfAttr = symbol.GetAttributes().FirstOrDefault(attr => attr.AttributeClass?.Name == "GTFieldAttribute" || attr.AttributeClass?.ToDisplayString() == "GTMH.S11n.GTFieldAttribute");
+          if(gtfAttr != null)
+          {
+            attrs.Add(ParseAttribute(symbol, gtfAttr));
           }
         }
       }
@@ -88,6 +108,20 @@ namespace GTMH.S11n
         default:
         {
           return new S11nClassDefn.TryParseField(property.Name, property.Type.Name);
+        }
+      }
+    }
+    private static S11nClassDefn.IFieldData ParseAttribute(IFieldSymbol field, AttributeData gtfAttr)
+    {
+      switch(field.Type.TypeKind)
+      {
+        case TypeKind.Enum:
+        {
+          return new S11nClassDefn.EnumField(field.Name, field.Type.ToDisplayString());
+        }
+        default:
+        {
+          return new S11nClassDefn.TryParseField(field.Name, field.Type.Name);
         }
       }
     }
