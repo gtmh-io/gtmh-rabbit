@@ -8,9 +8,12 @@ namespace GTMH.S11n.UnitTests.Impl
   {
     [GTField]
     public string StringValue { get; set; } = "StringValueDefault";
-    public HasGTFields000(string a_StringValue)
+    [GTField]
+    public int IntValue { get; set; } = 69;
+    public HasGTFields000(string a_StringValue, int a_IntValue)
     {
       StringValue = a_StringValue;
+      IntValue = a_IntValue;
     }
   }
 }

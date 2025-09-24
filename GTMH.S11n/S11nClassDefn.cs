@@ -40,6 +40,11 @@ namespace GTMH.S11n
             code.WriteLine($"{a_Args}.Add(\"{this.Name}\", {this.Name});");
             break;
           }
+          default:
+          {
+            code.WriteLine($"{a_Args}.Add(\"{this.Name}\", {this.Name}.ToString());");
+            break;
+          }
         }
       }
 
@@ -50,6 +55,17 @@ namespace GTMH.S11n
           case "String":
           {
             code.WriteLine($"this.{Name}=a_Args.GetValue(\"{this.Name}\", {this.Name});");
+            break;
+          }
+          default:
+          {
+            code.WriteLine("{");
+            using(code.Indent())
+            {
+              code.WriteLine($"var tmp = a_Args.GetValue(\"{this.Name}\", {this.Name}.ToString());");
+              code.WriteLine($"{this.Name}={this.Type}.Parse(tmp);");
+            }
+            code.WriteLine("}");
             break;
           }
         }

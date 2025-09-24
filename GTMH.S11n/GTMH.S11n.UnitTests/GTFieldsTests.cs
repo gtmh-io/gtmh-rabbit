@@ -11,11 +11,21 @@ namespace GTMH.S11n.UnitTests
     [Test]
     public async ValueTask TestHasGTFields000()
     {
-      var obj = new HasGTFields000("roger");
-      await Assert.That(obj.StringValue).IsEqualTo("roger");
+      var obj = new HasGTFields000("roger", 1974);
       var s11n = obj.ParseS11n();
       var _obj = new HasGTFields000(new GTArgs(s11n));
       await Assert.That(_obj.StringValue).IsEqualTo("roger");
+      await Assert.That(_obj.IntValue).IsEqualTo(1974);
+    }
+    [Test]
+    public async ValueTask TestHasGTFields000_Default()
+    {
+      var obj = new HasGTFields000(new GTArgs() );
+      await Assert.That(obj.StringValue).IsEqualTo("StringValueDefault");
+      var s11n = obj.ParseS11n();
+      var _obj = new HasGTFields000(new GTArgs(s11n));
+      await Assert.That(_obj.StringValue).IsEqualTo("StringValueDefault");
+
     }
   }
 }

@@ -8,6 +8,7 @@ namespace GTMH.S11n
   public class GTArgs : IGTArgs, IEnumerable<KeyValuePair<string, string>> 
   {
     private Dictionary<string,string> m_Data = new Dictionary<string,string>();
+    public GTArgs() { }
     public GTArgs(IEnumerable<KeyValuePair<string, string>> data)
     {
       foreach(var kvp in data)
