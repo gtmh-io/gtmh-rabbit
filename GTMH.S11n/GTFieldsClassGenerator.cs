@@ -50,7 +50,7 @@ namespace GTMH.S11n
       var classSymbol = ctx.SemanticModel.GetDeclaredSymbol(cls);
       if ( classSymbol == null ) return null;
 
-      var attrs = new List<S11nClassDefn.FieldData>();
+      var attrs = new List<S11nClassDefn.IFieldData>();
 
       foreach (var member in classSymbol.GetMembers())
       {
@@ -77,9 +77,19 @@ namespace GTMH.S11n
       return new S11nClassDefn(usings, ns, GetVisibility(cls.Modifiers, cls.Parent is TypeDeclarationSyntax), classSymbol.Name, attrs);
     }
 
-    private static S11nClassDefn.FieldData ParseAttribute(IPropertySymbol property, AttributeData gtfAttr)
+    private static S11nClassDefn.IFieldData ParseAttribute(IPropertySymbol property, AttributeData gtfAttr)
     {
-      return new S11nClassDefn.FieldData(property.Name, property.Type.Name);
+      switch(property.Type.TypeKind)
+      {
+        case TypeKind.Enum:
+        {
+          return new S11nClassDefn.EnumField(property.Name, property.Type.ToDisplayString());
+        }
+        default:
+        {
+          return new S11nClassDefn.TryParseField(property.Name, property.Type.Name);
+        }
+      }
     }
 
     private static string GetVisibility(SyntaxTokenList modifiers, bool a_IsNested)
