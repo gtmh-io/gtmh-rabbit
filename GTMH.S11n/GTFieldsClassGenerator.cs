@@ -28,7 +28,7 @@ namespace GTMH.S11n
     {
       var cls = node as ClassDeclarationSyntax;
       if ( cls == null ) return false;
-      foreach(var pds in cls.Members.OfType<PropertyDeclarationSyntax>().Where(property => property.AttributeLists.Any()))
+      /*foreach(var pds in cls.Members.OfType<PropertyDeclarationSyntax>().Where(property => property.AttributeLists.Any()))
       {
         if ( pds.AttributeLists.Any(al=>
         {
@@ -52,18 +52,13 @@ namespace GTMH.S11n
           });
         })) return true;
       }
-      return false;
+      return false;*/
+      return true;
     }
 
-
-    private static S11nClassDefn DeepSeekTarget(GeneratorSyntaxContext ctx)
+    private static List<S11nClassDefn.IFieldData> ParseGTFields(INamedTypeSymbol classSymbol)
     {
-      var cls = (ClassDeclarationSyntax)ctx.Node;
-      var classSymbol = ctx.SemanticModel.GetDeclaredSymbol(cls);
-      if ( classSymbol == null ) return null;
-
       var attrs = new List<S11nClassDefn.IFieldData>();
-
       foreach (var member in classSymbol.GetMembers())
       {
         if (member is IPropertySymbol property)
@@ -84,17 +79,63 @@ namespace GTMH.S11n
           }
         }
       }
-      if(!attrs.Any())
+      return attrs;
+    }
+
+    private static S11nClassDefn DeepSeekTarget(GeneratorSyntaxContext ctx)
+    {
+      var cls = (ClassDeclarationSyntax)ctx.Node;
+      var classSymbol = ctx.SemanticModel.GetDeclaredSymbol(cls);
+      if ( classSymbol == null ) return null;
+
+      var attrs=ParseGTFields(classSymbol);
+
+      // need to check if any parent classes have GTFields
+      var isGTDerived = SeekGTFieldParents(classSymbol.BaseType);
+
+      if(!attrs.Any()&&!isGTDerived)
       {
         return null;
       }
+      // check for custom constructors
+      var constructors = ParseCustomConstructors(classSymbol);
+
       var ns = GetNamespace(cls);
       var usings = new List<string>();
       foreach(var use in cls.SyntaxTree.GetCompilationUnitRoot().Usings)
       {
         usings.Add(use.ToString());
       }
-      return new S11nClassDefn(usings, ns, GetVisibility(cls.Modifiers, cls.Parent is TypeDeclarationSyntax), classSymbol.Name, attrs);
+      return new S11nClassDefn(usings, ns, GetVisibility(cls.Modifiers, cls.Parent is TypeDeclarationSyntax), classSymbol.Name, attrs, isGTDerived, constructors.Any());
+    }
+
+    private static List<IMethodSymbol> ParseCustomConstructors(INamedTypeSymbol classSymbol)
+    {
+      var rval = new List<IMethodSymbol>();
+      foreach(var constructor in classSymbol.Constructors)
+      {
+        var attrs = constructor.GetAttributes();
+        if(attrs != null&&attrs.Length >0)
+        {
+          foreach(var attr in attrs)
+          {
+            if(attr.AttributeClass.ToDisplayString() == "GTMH.S11n.GTFieldCustomConstructorAttribute")
+            {
+              rval.Add(constructor);
+            }
+          }
+        }
+      }
+      return rval;
+    }
+
+    private static bool SeekGTFieldParents(INamedTypeSymbol baseType)
+    {
+      if ( baseType == null ) return false;
+      else if ( baseType.SpecialType == SpecialType.System_Object ) return false;
+      var attrs = ParseGTFields(baseType);
+      if ( attrs.Any() ) return true;
+      else return SeekGTFieldParents(baseType.BaseType);
     }
 
     private static S11nClassDefn.IFieldData ParseAttribute(IPropertySymbol property, AttributeData gtfAttr)
@@ -225,15 +266,20 @@ namespace GTMH.S11n
 
     private static void WriteS11n(S11nClassDefn a_Defn, Code code)
     {
-      code.WriteLine("public virtual Dictionary<string,string> ParseS11n()");
+      var modifier = a_Defn.HasGTParent ? "override" : "virtual";
+      code.WriteLine($"public {modifier} Dictionary<string,string> ParseS11n()");
       code.WriteLine("{");
       using(code.Indent())
       {
         code.WriteLine("return S11nGather(new Dictionary<string, string>());");
       }
       code.WriteLine("}");
-      code.WriteLine("public virtual Dictionary<string,string> S11nGather(Dictionary<string,string> a_Args)");
+      code.WriteLine($"public {modifier} Dictionary<string,string> S11nGather(Dictionary<string,string> a_Args)");
       code.WriteLine("{");
+      if(a_Defn.HasGTParent)
+      {
+        code.WriteLine("base.S11nGather(a_Args);");
+      }
       using(code.Indent())
       {
         foreach(var field in a_Defn.Fields)
@@ -248,16 +294,33 @@ namespace GTMH.S11n
 
     private static void WriteConstructors(S11nClassDefn a_Defn, Code code)
     {
-      code.WriteLine($"public {a_Defn.ClassName}(IGTArgs a_Args)");
-      code.WriteLine("{");
-      using(code.Indent())
+      if(a_Defn.CustomConstructor)
       {
-        foreach(var attr in a_Defn.Fields)
+        code.WriteLine("private void SetS11n(IGTArgs a_Args)");
+        code.WriteLine("{");
+        using(code.Indent())
         {
-          attr.WriteInitialisation(code);
+          foreach(var field in a_Defn.Fields)
+          {
+            field.WriteInitialisation(code);
+          }
         }
+        code.WriteLine("}");
       }
-      code.WriteLine("}");
+      else
+      {
+        var parentInit = a_Defn.HasGTParent ? " : base(a_Args)" : "";
+        code.WriteLine($"public {a_Defn.ClassName}(IGTArgs a_Args){parentInit}");
+        code.WriteLine("{");
+        using(code.Indent())
+        {
+          foreach(var attr in a_Defn.Fields)
+          {
+            attr.WriteInitialisation(code);
+          }
+        }
+        code.WriteLine("}");
+      }
     }
   }
 }

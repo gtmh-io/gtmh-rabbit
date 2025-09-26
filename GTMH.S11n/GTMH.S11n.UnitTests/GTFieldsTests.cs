@@ -53,5 +53,13 @@ namespace GTMH.S11n.UnitTests
       await Assert.That(_obj.DerivedStringValue).IsEqualTo("roger_derived");
 
     }
+    [Test]
+    public async ValueTask TestBaseDerivedNotGTFields()
+    {
+      var obj = new HasNotGTFieldsDerived("roger");
+      var s11n = obj.ParseS11n();
+      var _obj = new HasNotGTFieldsDerived(new GTArgs(s11n));
+      await Assert.That(_obj.BaseStringValue).IsEqualTo("roger");
+    }
   }
 }

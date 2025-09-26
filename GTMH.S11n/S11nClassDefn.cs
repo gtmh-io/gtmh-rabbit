@@ -13,14 +13,18 @@ namespace GTMH.S11n
     public readonly string Visibility;
     public readonly string ClassName;
     public readonly IFieldData[] Fields;
+    public readonly bool HasGTParent;
+    public readonly bool CustomConstructor;
 
-    public S11nClassDefn(List<string> a_Usings, string a_NS, string a_Visibility, string a_ClassName, List<IFieldData> attrs)
+    public S11nClassDefn(List<string> a_Usings, string a_NS, string a_Visibility, string a_ClassName, List<IFieldData> attrs, bool a_HasGTParent, bool a_CustomConstructor)
     {
       this.Usings = a_Usings.ToArray();
       this.Namespace = a_NS;
       this.Visibility = a_Visibility;
       this.ClassName = a_ClassName;
       this.Fields = attrs.ToArray();
+      this.HasGTParent = a_HasGTParent;
+      this.CustomConstructor = a_CustomConstructor;
     }
 
     public interface IFieldData
