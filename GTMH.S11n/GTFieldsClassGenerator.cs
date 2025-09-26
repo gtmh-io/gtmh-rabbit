@@ -156,6 +156,28 @@ namespace GTMH.S11n
             }
             break;
           }
+          case "Parse":
+          {
+            if(attr.Value.Value is string strValue)
+            {
+              if(!string.IsNullOrWhiteSpace(strValue))
+              {
+                rval.Parse = strValue;
+              }
+            }
+            break;
+          }
+          case "DeParse":
+          {
+            if(attr.Value.Value is string strValue)
+            {
+              if(!string.IsNullOrWhiteSpace(strValue))
+              {
+                rval.DeParse = strValue;
+              }
+            }
+            break;
+          }
           default:
           {
             System.Diagnostics.Debugger.Launch();
@@ -168,30 +190,40 @@ namespace GTMH.S11n
 
     private static S11nClassDefn.IFieldData ParseAttribute(IPropertySymbol property, AttributeData gtfAttr)
     {
+      var attr = RealiseAttribute(gtfAttr);
+      if(attr.Parse != null || attr.DeParse != null)
+      {
+        return new S11nClassDefn.CustomField(property.Name, attr);
+      }
       switch(property.Type.TypeKind)
       {
         case TypeKind.Enum:
         {
-          return new S11nClassDefn.EnumField(property.Name, property.Type.ToDisplayString(), RealiseAttribute(gtfAttr));
+          return new S11nClassDefn.EnumField(property.Name, property.Type.ToDisplayString(), attr);
         }
         default:
         {
-          return new S11nClassDefn.TryParseField(property.Name, property.Type.Name, RealiseAttribute(gtfAttr));
+          return new S11nClassDefn.TryParseField(property.Name, property.Type.Name, attr);
         }
       }
     }
 
     private static S11nClassDefn.IFieldData ParseAttribute(IFieldSymbol field, AttributeData gtfAttr)
     {
+      var attr = RealiseAttribute(gtfAttr);
+      if(attr.Parse != null || attr.DeParse != null)
+      {
+        return new S11nClassDefn.CustomField(field.Name, attr);
+      }
       switch(field.Type.TypeKind)
       {
         case TypeKind.Enum:
         {
-          return new S11nClassDefn.EnumField(field.Name, field.Type.ToDisplayString(), RealiseAttribute(gtfAttr));
+          return new S11nClassDefn.EnumField(field.Name, field.Type.ToDisplayString(), attr);
         }
         default:
         {
-          return new S11nClassDefn.TryParseField(field.Name, field.Type.Name, RealiseAttribute(gtfAttr));
+          return new S11nClassDefn.TryParseField(field.Name, field.Type.Name, attr);
         }
       }
     }

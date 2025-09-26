@@ -30,6 +30,8 @@ namespace GTMH.S11n
     public class GTFieldAttrs
     {
       internal string AKA = null;
+      internal string Parse = null;
+      internal string DeParse = null;
     }
 
     public interface IFieldData
@@ -66,15 +68,49 @@ namespace GTMH.S11n
           }
           else
           {
-            code.WriteLine("var NExist=Guid.NewGuid().ToString();");
-            code.WriteLine($"var tmp = a_Args.GetValue(\"{this.Name}\", NExist);");
-            code.WriteLine($"if ( tmp == NExist ) tmp = a_Args.GetValue(\"{Attrs.AKA}\", {this.Name}.ToString());");
+            code.WriteLine($"var tmp = a_Args.GetValue(\"{this.Name}\", GTArgs.NoValue);");
+            code.WriteLine($"if ( tmp == GTArgs.NoValue ) tmp = a_Args.GetValue(\"{Attrs.AKA}\", {this.Name}.ToString());");
           }
 
           code.WriteLine($"if( Enum.TryParse<{this.Type}>(tmp, out {this.Type} _tmp)) {this.Name}=_tmp;");
           code.WriteLine($"else throw new ArgumentException(\"Could not convert to {this.Type}\");");
         }
         code.WriteLine("}");
+      }
+    }
+    internal class CustomField : IFieldData
+    {
+      private readonly string Name;
+      private readonly GTFieldAttrs Attrs;
+
+      public CustomField(string Name, GTFieldAttrs a_Attrs)
+      {
+        this.Name = Name;
+        this.Attrs = a_Attrs;
+      }
+
+      public void WriteGather(Code code, string a_Args)
+      {
+        code.WriteLine($"{a_Args}.Add(\"{this.Name}\", {Attrs.DeParse}({this.Name}));");
+      }
+
+      public void WriteInitialisation(Code code)
+      {
+        if(Attrs.AKA == null)
+        {
+          code.WriteLine($"this.{Name}={Attrs.Parse}(a_Args.GetValue(\"{this.Name}\", {Attrs.DeParse}({this.Name})));");
+        }
+        else
+        {
+          code.WriteLine("{");
+          using(code.Indent())
+          {
+            code.WriteLine($"var tmp=a_Args.GetValue(\"{this.Name}\", GTArgs.NoValue);");
+            code.WriteLine($"if(tmp==GTArgs.NoValue) tmp=a_Args.GetValue(\"{Attrs.AKA}\", {Attrs.DeParse}(this.{this.Name}));");
+            code.WriteLine($"this.{Name}={Attrs.Parse}(tmp);");
+          }
+          code.WriteLine("}");
+        }
       }
     }
 
@@ -122,10 +158,9 @@ namespace GTMH.S11n
               code.WriteLine("{");
               using(code.Indent())
               {
-                code.WriteLine("var NExist=Guid.NewGuid().ToString();");
                 // try for the new field name first
-                code.WriteLine($"var tmp=a_Args.GetValue(\"{this.Name}\", NExist);");
-                code.WriteLine($"if(tmp==NExist) tmp=a_Args.GetValue(\"{Attrs.AKA}\", this.{this.Name});");
+                code.WriteLine($"var tmp=a_Args.GetValue(\"{this.Name}\", GTArgs.NoValue);");
+                code.WriteLine($"if(tmp==GTArgs.NoValue) tmp=a_Args.GetValue(\"{Attrs.AKA}\", this.{this.Name});");
                 code.WriteLine($"this.{Name}=tmp;");
               }
               code.WriteLine("}");
@@ -143,10 +178,9 @@ namespace GTMH.S11n
               }
               else
               {
-                code.WriteLine("var NExist=Guid.NewGuid().ToString();");
                 // try for the new field name first
-                code.WriteLine($"var tmp=a_Args.GetValue(\"{this.Name}\", NExist);");
-                code.WriteLine($"if(tmp==NExist) tmp=a_Args.GetValue(\"{Attrs.AKA}\", this.{this.Name}.ToString());");
+                code.WriteLine($"var tmp=a_Args.GetValue(\"{this.Name}\", GTArgs.NoValue);");
+                code.WriteLine($"if(tmp==GTArgs.NoValue) tmp=a_Args.GetValue(\"{Attrs.AKA}\", this.{this.Name}.ToString());");
               }
               code.WriteLine($"this.{this.Name}={this.Type}.Parse(tmp);");
             }
@@ -156,5 +190,6 @@ namespace GTMH.S11n
         }
       }
     }
+
   }
 }

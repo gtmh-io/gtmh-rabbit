@@ -6,7 +6,7 @@ namespace GTMH.S11n.UnitTests.Impl
 {
   public partial class HasGTFieldsAKA
   {
-    public enum Enum_t { ValueA = 1, ValueB = 2 }
+    public enum Enum_t { ValueA = 1, ValueB = 2, ValueC = 3 }
     [GTField(AKA="OldStringProperty")]
     public readonly string NewStringProperty = "StringValue";
     [GTField(AKA ="OldIntProperty")]

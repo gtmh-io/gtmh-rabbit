@@ -13,7 +13,7 @@ namespace GTMH.S11n.UnitTests
     {
       var obj = new HasGTFieldsAsProperties("roger", 1974, HasGTFieldsAsProperties.Value_t.ValueB);
       var s11n = obj.ParseS11n();
-      var _obj = new HasGTFieldsAsProperties(new GTArgs(s11n));
+      var _obj = new HasGTFieldsAsProperties(new DictionaryConfig(s11n).ForInit());
       await Assert.That(_obj.StringValue).IsEqualTo("roger");
       await Assert.That(_obj.IntValue).IsEqualTo(1974);
       await Assert.That(_obj.EnumValue).IsEqualTo(HasGTFieldsAsProperties.Value_t.ValueB);
@@ -23,7 +23,7 @@ namespace GTMH.S11n.UnitTests
     {
       var obj = new HasGTFieldsAsROFields("roger", 1974, HasGTFieldsAsROFields.Value_t.ValueB);
       var s11n = obj.ParseS11n();
-      var _obj = new HasGTFieldsAsROFields(new GTArgs(s11n));
+      var _obj = new HasGTFieldsAsROFields(new DictionaryConfig(s11n).ForInit());
       await Assert.That(_obj.StringValue).IsEqualTo("roger");
       await Assert.That(_obj.IntValue).IsEqualTo(1974);
       await Assert.That(_obj.EnumValue).IsEqualTo(HasGTFieldsAsROFields.Value_t.ValueB);
@@ -31,12 +31,12 @@ namespace GTMH.S11n.UnitTests
     [Test]
     public async ValueTask TestHasGTFields000_Default()
     {
-      var obj = new HasGTFieldsAsProperties(new GTArgs() );
+      var obj = new HasGTFieldsAsProperties(new DictionaryConfig().ForInit());
       await Assert.That(obj.StringValue).IsEqualTo("StringValueDefault");
       await Assert.That(obj.IntValue).IsEqualTo(69);
       await Assert.That(obj.EnumValue).IsEqualTo(HasGTFieldsAsProperties.Value_t.ValueA);
       var s11n = obj.ParseS11n();
-      var _obj = new HasGTFieldsAsProperties(new GTArgs(s11n));
+      var _obj = new HasGTFieldsAsProperties(new DictionaryConfig(s11n).ForInit());
       await Assert.That(_obj.StringValue).IsEqualTo("StringValueDefault");
       await Assert.That(_obj.IntValue).IsEqualTo(69);
       await Assert.That(_obj.EnumValue).IsEqualTo(HasGTFieldsAsProperties.Value_t.ValueA);
@@ -48,7 +48,7 @@ namespace GTMH.S11n.UnitTests
       await Assert.That(obj.BaseStringValue).IsEqualTo("roger_base");
       await Assert.That(obj.DerivedStringValue).IsEqualTo("roger_derived");
       var s11n = obj.ParseS11n();
-      var _obj = new HasGTFieldsDerived(new GTArgs(s11n));
+      var _obj = new HasGTFieldsDerived(new DictionaryConfig(s11n).ForInit());
       await Assert.That(_obj.BaseStringValue).IsEqualTo("roger_base");
       await Assert.That(_obj.DerivedStringValue).IsEqualTo("roger_derived");
 
@@ -58,20 +58,66 @@ namespace GTMH.S11n.UnitTests
     {
       var obj = new HasNotGTFieldsDerived("roger");
       var s11n = obj.ParseS11n();
-      var _obj = new HasNotGTFieldsDerived(new GTArgs(s11n));
+      var _obj = new HasNotGTFieldsDerived(new DictionaryConfig(s11n).ForInit());
       await Assert.That(_obj.BaseStringValue).IsEqualTo("roger");
     }
     [Test]
     public async ValueTask TestAKA()
     {
-      var obj = new HasGTFieldsAKA(new GTArgs(new Dictionary<string,string>{
+      var obj = new HasGTFieldsAKA(new DictionaryConfig(new Dictionary<string,string>{
         { "OldStringProperty", "roger" },
         { "OldIntProperty", "1974" },
         { "OldEnumProperty", "ValueB" },
-      }));
+      }).ForInit());
       await Assert.That(obj.NewStringProperty).IsEqualTo("roger");
       await Assert.That(obj.NewIntProperty).IsEqualTo(1974);
       await Assert.That(obj.NewEnumProperty).IsEqualTo(HasGTFieldsAKA.Enum_t.ValueB);
+    }
+    [Test]
+    public async ValueTask TestAKAExtant()
+    {
+      // should prefer the 'new' values
+      var obj = new HasGTFieldsAKA(new DictionaryConfig(new Dictionary<string,string>{
+        { "OldStringProperty", "roger" },
+        { "OldIntProperty", "1974" },
+        { "OldEnumProperty", "ValueB" },
+        { "NewStringProperty", "rabbit" },
+        { "NewIntProperty", "3141" },
+        { "NewEnumProperty", "ValueC" },
+      }).ForInit());
+      await Assert.That(obj.NewStringProperty).IsEqualTo("rabbit");
+      await Assert.That(obj.NewIntProperty).IsEqualTo(3141);
+      await Assert.That(obj.NewEnumProperty).IsEqualTo(HasGTFieldsAKA.Enum_t.ValueC);
+    }
+    [Test]
+    public async ValueTask TestCustomParsing()
+    {
+      var obj = new HasGTFieldsCustomParse("roger", "rabbit");
+      var s11n = obj.ParseS11n();
+      var _obj = new HasGTFieldsCustomParse(new DictionaryConfig(s11n).ForInit());
+      await Assert.That(_obj.Id.Code).IsEqualTo("roger");
+      await Assert.That(_obj.Id2.Code).IsEqualTo("rabbit");
+    }
+    [Test]
+    public async ValueTask TestCustomParsingAKA()
+    {
+      var obj = new HasGTFieldsCustomParse(new DictionaryConfig(new Dictionary<string, string>{
+        { "Id", "roger" },
+        { "OldId2", "rabbit" }
+      }).ForInit());
+      await Assert.That(obj.Id.Code).IsEqualTo("roger");
+      await Assert.That(obj.Id2.Code).IsEqualTo("rabbit");
+    }
+    [Test]
+    public async ValueTask TestCustomParsingAKAPrecedence()
+    {
+      var obj = new HasGTFieldsCustomParse(new DictionaryConfig(new Dictionary<string, string>{
+        { "Id", "roger" },
+        { "OldId2", "rabbit" },
+        { "Id2", "beetroot" } // this should take precedence
+      }).ForInit());
+      await Assert.That(obj.Id.Code).IsEqualTo("roger");
+      await Assert.That(obj.Id2.Code).IsEqualTo("beetroot");
     }
   }
 }

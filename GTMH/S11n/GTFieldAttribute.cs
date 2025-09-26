@@ -11,7 +11,7 @@ namespace GTMH
 	[AttributeUsage(AttributeTargets.Field|AttributeTargets.Property)]
 	public class GTFieldAttribute : System.Attribute
 	{
-		public bool Required = false;
+		//public bool Required = false;
 		public string EditorBrief = "";
 		/// <summary>
 		/// Indicates the field/property is reflect loadable. If this is marked true
@@ -19,26 +19,31 @@ namespace GTMH
 		/// which is named Name+"Instance". If setup this way GTFields.Init can magically
 		/// load shit
 		/// </summary>
-		public bool TInstance = false;
+		//public bool TInstance = false;
 
 		/// <summary>
 		/// Not visible in the editor but configured via GTFields.Init
 		/// </summary>
-		public bool Visible = true;
+		//public bool Visible = true;
 
 		/// <summary>
 		/// Neither visible in the editor nor configured via GTFields.Init
 		/// </summary>
-		public bool NotConfigurable = false;
+		//public bool NotConfigurable = false;
 
 		/// <summary>
 		/// Don't init the field, the declaring type is in charge of manually init
 		/// </summary>
-		public bool DelayedInit = false;
+		//public bool DelayedInit = false;
 
 		/// <summary>
 		/// The item may have been named, this was it's old name
 		/// </summary>
 		public string ? AKA = null;
+    /// <summary>
+    /// For custome parse, serialise
+    /// </summary>
+    public string ? Parse = null;
+    public string ? DeParse = null;
 	}
 }
