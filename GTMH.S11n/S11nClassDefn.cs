@@ -27,6 +27,11 @@ namespace GTMH.S11n
       this.CustomConstructor = a_CustomConstructor;
     }
 
+    public class GTFieldAttrs
+    {
+      internal string AKA = null;
+    }
+
     public interface IFieldData
     {
       void WriteGather(Code code, string a_Args);
@@ -37,10 +42,12 @@ namespace GTMH.S11n
     {
       public readonly string Name;
       public readonly string Type;
-      public EnumField(string a_Name, string a_Type)
+      public readonly GTFieldAttrs Attrs;
+      public EnumField(string a_Name, string a_Type, GTFieldAttrs a_Attrs)
       {
         this.Name = a_Name;
         Type = a_Type;
+        Attrs = a_Attrs;
       }
 
       public void WriteGather(Code code, string a_Args)
@@ -53,7 +60,17 @@ namespace GTMH.S11n
         code.WriteLine("{");
         using(code.Indent())
         {
-          code.WriteLine($"var tmp = a_Args.GetValue(\"{this.Name}\", {this.Name}.ToString());");
+          if(Attrs.AKA == null)
+          {
+            code.WriteLine($"var tmp = a_Args.GetValue(\"{this.Name}\", {this.Name}.ToString());");
+          }
+          else
+          {
+            code.WriteLine("var NExist=Guid.NewGuid().ToString();");
+            code.WriteLine($"var tmp = a_Args.GetValue(\"{this.Name}\", NExist);");
+            code.WriteLine($"if ( tmp == NExist ) tmp = a_Args.GetValue(\"{Attrs.AKA}\", {this.Name}.ToString());");
+          }
+
           code.WriteLine($"if( Enum.TryParse<{this.Type}>(tmp, out {this.Type} _tmp)) {this.Name}=_tmp;");
           code.WriteLine($"else throw new ArgumentException(\"Could not convert to {this.Type}\");");
         }
@@ -65,10 +82,12 @@ namespace GTMH.S11n
     {
       public readonly string Type;
       public readonly string Name;
-      public TryParseField(string a_Name, String a_Type)
+      public readonly GTFieldAttrs Attrs;
+      public TryParseField(string a_Name, String a_Type, GTFieldAttrs a_Attrs)
       {
         Name = a_Name;
         Type =a_Type;
+        Attrs = a_Attrs;
       }
 
       public void WriteGather(Code code, string a_Args)
@@ -94,7 +113,23 @@ namespace GTMH.S11n
         {
           case "String":
           {
-            code.WriteLine($"this.{Name}=a_Args.GetValue(\"{this.Name}\", {this.Name});");
+            if(Attrs.AKA == null)
+            {
+              code.WriteLine($"this.{Name}=a_Args.GetValue(\"{this.Name}\", {this.Name});");
+            }
+            else
+            {
+              code.WriteLine("{");
+              using(code.Indent())
+              {
+                code.WriteLine("var NExist=Guid.NewGuid().ToString();");
+                // try for the new field name first
+                code.WriteLine($"var tmp=a_Args.GetValue(\"{this.Name}\", NExist);");
+                code.WriteLine($"if(tmp==NExist) tmp=a_Args.GetValue(\"{Attrs.AKA}\", this.{this.Name});");
+                code.WriteLine($"this.{Name}=tmp;");
+              }
+              code.WriteLine("}");
+            }
             break;
           }
           default:
@@ -102,8 +137,18 @@ namespace GTMH.S11n
             code.WriteLine("{");
             using(code.Indent())
             {
-              code.WriteLine($"var tmp = a_Args.GetValue(\"{this.Name}\", {this.Name}.ToString());");
-              code.WriteLine($"{this.Name}={this.Type}.Parse(tmp);");
+              if(Attrs.AKA == null)
+              {
+                code.WriteLine($"var tmp = a_Args.GetValue(\"{this.Name}\", this.{this.Name}.ToString());");
+              }
+              else
+              {
+                code.WriteLine("var NExist=Guid.NewGuid().ToString();");
+                // try for the new field name first
+                code.WriteLine($"var tmp=a_Args.GetValue(\"{this.Name}\", NExist);");
+                code.WriteLine($"if(tmp==NExist) tmp=a_Args.GetValue(\"{Attrs.AKA}\", this.{this.Name}.ToString());");
+              }
+              code.WriteLine($"this.{this.Name}={this.Type}.Parse(tmp);");
             }
             code.WriteLine("}");
             break;

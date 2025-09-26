@@ -61,5 +61,17 @@ namespace GTMH.S11n.UnitTests
       var _obj = new HasNotGTFieldsDerived(new GTArgs(s11n));
       await Assert.That(_obj.BaseStringValue).IsEqualTo("roger");
     }
+    [Test]
+    public async ValueTask TestAKA()
+    {
+      var obj = new HasGTFieldsAKA(new GTArgs(new Dictionary<string,string>{
+        { "OldStringProperty", "roger" },
+        { "OldIntProperty", "1974" },
+        { "OldEnumProperty", "ValueB" },
+      }));
+      await Assert.That(obj.NewStringProperty).IsEqualTo("roger");
+      await Assert.That(obj.NewIntProperty).IsEqualTo(1974);
+      await Assert.That(obj.NewEnumProperty).IsEqualTo(HasGTFieldsAKA.Enum_t.ValueB);
+    }
   }
 }

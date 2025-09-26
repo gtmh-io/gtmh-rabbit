@@ -138,31 +138,60 @@ namespace GTMH.S11n
       else return SeekGTFieldParents(baseType.BaseType);
     }
 
+    private static S11nClassDefn.GTFieldAttrs RealiseAttribute(AttributeData gtfAttr)
+    {
+      S11nClassDefn.GTFieldAttrs rval = new S11nClassDefn.GTFieldAttrs();
+      foreach(var attr in gtfAttr.NamedArguments)
+      {
+        switch(attr.Key)
+        {
+          case "AKA":
+          {
+            if(attr.Value.Value is string strValue)
+            {
+              if(!string.IsNullOrWhiteSpace(strValue))
+              {
+                rval.AKA = strValue;
+              }
+            }
+            break;
+          }
+          default:
+          {
+            System.Diagnostics.Debugger.Launch();
+            throw new NotImplementedException();
+          }
+        }
+      }
+      return rval;
+    }
+
     private static S11nClassDefn.IFieldData ParseAttribute(IPropertySymbol property, AttributeData gtfAttr)
     {
       switch(property.Type.TypeKind)
       {
         case TypeKind.Enum:
         {
-          return new S11nClassDefn.EnumField(property.Name, property.Type.ToDisplayString());
+          return new S11nClassDefn.EnumField(property.Name, property.Type.ToDisplayString(), RealiseAttribute(gtfAttr));
         }
         default:
         {
-          return new S11nClassDefn.TryParseField(property.Name, property.Type.Name);
+          return new S11nClassDefn.TryParseField(property.Name, property.Type.Name, RealiseAttribute(gtfAttr));
         }
       }
     }
+
     private static S11nClassDefn.IFieldData ParseAttribute(IFieldSymbol field, AttributeData gtfAttr)
     {
       switch(field.Type.TypeKind)
       {
         case TypeKind.Enum:
         {
-          return new S11nClassDefn.EnumField(field.Name, field.Type.ToDisplayString());
+          return new S11nClassDefn.EnumField(field.Name, field.Type.ToDisplayString(), RealiseAttribute(gtfAttr));
         }
         default:
         {
-          return new S11nClassDefn.TryParseField(field.Name, field.Type.Name);
+          return new S11nClassDefn.TryParseField(field.Name, field.Type.Name, RealiseAttribute(gtfAttr));
         }
       }
     }
