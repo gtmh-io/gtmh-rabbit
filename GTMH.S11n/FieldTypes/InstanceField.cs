@@ -18,12 +18,14 @@ namespace GTMH.S11n.FieldTypes
 
     public void WriteGather(Code code, string a_Args)
     {
-      //code.WriteLine("TODO");
+      code.WriteLine($"// TODO Name={Name} InstanceMemberName={InstanceMemberName} InterfaceType={InterfaceType}");
+      code.WriteLine($"a_Args.Add(\"{Name}\", {InstanceMemberName}.GetType().FullName);");
+      code.WriteLine($"using(a_Args.Context(\"{Name}\")) a_Args.S11nGather(this.{InstanceMemberName});");
     }
 
     public void WriteInitialisation(Code code)
     {
-      //code.WriteLine("TODO");
+      code.WriteLine($"// TODO Name={Name} InstanceMemberName={InstanceMemberName} InterfaceType={InterfaceType}");
     }
   }
 }

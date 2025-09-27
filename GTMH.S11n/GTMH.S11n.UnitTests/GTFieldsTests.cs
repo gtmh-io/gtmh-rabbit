@@ -119,6 +119,7 @@ namespace GTMH.S11n.UnitTests
       await Assert.That(obj.Id.Code).IsEqualTo("roger");
       await Assert.That(obj.Id2.Code).IsEqualTo("beetroot");
     }
+    
     [Test]
     public async ValueTask TestGTInstanceBasic()
     {

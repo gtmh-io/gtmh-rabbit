@@ -358,10 +358,10 @@ namespace GTMH.S11n
       code.WriteLine("{");
       using(code.Indent())
       {
-        code.WriteLine("return S11nGather(new Dictionary<string, string>());");
+        code.WriteLine("return S11nGather(new GTParseArgs()).Value;");
       }
       code.WriteLine("}");
-      code.WriteLine($"public {modifier} Dictionary<string,string> S11nGather(Dictionary<string,string> a_Args)");
+      code.WriteLine($"public {modifier} IGTParseArgs S11nGather(IGTParseArgs a_Args)");
       code.WriteLine("{");
       if(a_Defn.HasGTParent)
       {
