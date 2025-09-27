@@ -13,7 +13,7 @@ namespace GTMH.S11n.UnitTests.Impl
       StringValue = a_StringValue;
     }
     [GTFieldCustomConstructor]
-    public HasGTFieldsCustomConstructor(IGTArgs a_Args)
+    public HasGTFieldsCustomConstructor(IGTInitArgs a_Args)
     {
       this.SetS11n(a_Args);
     }

@@ -19,7 +19,7 @@ namespace GTMH
 		/// which is named Name+"Instance". If setup this way GTFields.Init can magically
 		/// load shit
 		/// </summary>
-		//public bool TInstance = false;
+		public bool GTInstance = false;
 
 		/// <summary>
 		/// Not visible in the editor but configured via GTFields.Init

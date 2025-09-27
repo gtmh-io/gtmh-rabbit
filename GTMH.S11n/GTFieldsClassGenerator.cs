@@ -1,4 +1,6 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using GTMH.S11n.FieldTypes;
+
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -56,9 +58,9 @@ namespace GTMH.S11n
       return true;
     }
 
-    private static List<S11nClassDefn.IFieldData> ParseGTFields(INamedTypeSymbol classSymbol)
+    private static List<IFieldType> ParseGTFields(INamedTypeSymbol classSymbol)
     {
-      var attrs = new List<S11nClassDefn.IFieldData>();
+      var attrs = new List<IFieldType>();
       foreach (var member in classSymbol.GetMembers())
       {
         if (member is IPropertySymbol property)
@@ -67,7 +69,7 @@ namespace GTMH.S11n
           var gtfAttr = property.GetAttributes().FirstOrDefault(attr => attr.AttributeClass?.Name == "GTFieldAttribute" || attr.AttributeClass?.ToDisplayString() == "GTMH.S11n.GTFieldAttribute");
           if(gtfAttr != null)
           {
-            attrs.Add(ParseAttribute(property, gtfAttr));
+            attrs.Add(ParseAttribute(property, classSymbol, gtfAttr));
           }
         }
         else if( member is IFieldSymbol symbol)
@@ -75,7 +77,7 @@ namespace GTMH.S11n
           var gtfAttr = symbol.GetAttributes().FirstOrDefault(attr => attr.AttributeClass?.Name == "GTFieldAttribute" || attr.AttributeClass?.ToDisplayString() == "GTMH.S11n.GTFieldAttribute");
           if(gtfAttr != null)
           {
-            attrs.Add(ParseAttribute(symbol, gtfAttr));
+            attrs.Add(ParseAttribute(symbol, classSymbol, gtfAttr));
           }
         }
       }
@@ -138,9 +140,9 @@ namespace GTMH.S11n
       else return SeekGTFieldParents(baseType.BaseType);
     }
 
-    private static S11nClassDefn.GTFieldAttrs RealiseAttribute(AttributeData gtfAttr)
+    private static GTFieldAttrs RealiseAttribute(AttributeData gtfAttr)
     {
-      S11nClassDefn.GTFieldAttrs rval = new S11nClassDefn.GTFieldAttrs();
+      GTFieldAttrs rval = new GTFieldAttrs();
       foreach(var attr in gtfAttr.NamedArguments)
       {
         switch(attr.Key)
@@ -178,6 +180,14 @@ namespace GTMH.S11n
             }
             break;
           }
+          case "GTInstance":
+          {
+            if(attr.Value.Value is bool boolValue)
+            {
+              rval.GTInstance = boolValue;
+            }
+            break;
+          }
           default:
           {
             System.Diagnostics.Debugger.Launch();
@@ -188,45 +198,61 @@ namespace GTMH.S11n
       return rval;
     }
 
-    private static S11nClassDefn.IFieldData ParseAttribute(IPropertySymbol property, AttributeData gtfAttr)
+    private static IFieldType ParseAttribute(IPropertySymbol property, INamedTypeSymbol a_Container, AttributeData a_AttrData)
     {
-      var attr = RealiseAttribute(gtfAttr);
-      if(attr.Parse != null || attr.DeParse != null)
+      return ParseAttribute(property.Name, property.Type, a_Container, a_AttrData);
+    }
+
+    private static IFieldType ParseAttribute(IFieldSymbol field, INamedTypeSymbol a_Container, AttributeData a_AttrData)
+    {
+      return ParseAttribute(field.Name, field.Type, a_Container, a_AttrData);
+    }
+
+    static ITypeSymbol GetInstanceType(ISymbol a_Symbol)
+    {
+      if(a_Symbol is IPropertySymbol property)
       {
-        return new S11nClassDefn.CustomField(property.Name, attr);
+        return property.Type;
       }
-      switch(property.Type.TypeKind)
+      else if(a_Symbol is IFieldSymbol field)
+      {
+        return field.Type;
+      }
+      else
+      {
+        throw new ArgumentException("Invalid type for instance");
+
+      }
+    }
+
+    private static IFieldType ParseAttribute(string a_Name, ITypeSymbol a_Type, INamedTypeSymbol a_Container, AttributeData a_AttrData)
+    {
+      var attr = RealiseAttribute(a_AttrData);
+      if(attr.GTInstance)
+      {
+        // TODO - should have an analyser catching this error 
+        var backingName = $"{a_Name}Instance";
+        var instanceMember = a_Container.GetMembers(backingName).Single();
+        var type = GetInstanceType(instanceMember);
+        return new InstanceField(a_Name, backingName, type.ToDisplayString());
+      }
+      else if(attr.Parse != null || attr.DeParse != null)
+      {
+        return new CustomField(a_Name, attr);
+      }
+      switch(a_Type.TypeKind)
       {
         case TypeKind.Enum:
         {
-          return new S11nClassDefn.EnumField(property.Name, property.Type.ToDisplayString(), attr);
+          return new EnumField(a_Name, a_Type.ToDisplayString(), attr);
         }
         default:
         {
-          return new S11nClassDefn.TryParseField(property.Name, property.Type.Name, attr);
+          return new TryParseField(a_Name, a_Type.Name, attr);
         }
       }
     }
 
-    private static S11nClassDefn.IFieldData ParseAttribute(IFieldSymbol field, AttributeData gtfAttr)
-    {
-      var attr = RealiseAttribute(gtfAttr);
-      if(attr.Parse != null || attr.DeParse != null)
-      {
-        return new S11nClassDefn.CustomField(field.Name, attr);
-      }
-      switch(field.Type.TypeKind)
-      {
-        case TypeKind.Enum:
-        {
-          return new S11nClassDefn.EnumField(field.Name, field.Type.ToDisplayString(), attr);
-        }
-        default:
-        {
-          return new S11nClassDefn.TryParseField(field.Name, field.Type.Name, attr);
-        }
-      }
-    }
 
     private static string GetVisibility(SyntaxTokenList modifiers, bool a_IsNested)
     {
@@ -357,7 +383,7 @@ namespace GTMH.S11n
     {
       if(a_Defn.CustomConstructor)
       {
-        code.WriteLine("private void SetS11n(IGTArgs a_Args)");
+        code.WriteLine("private void SetS11n(IGTInitArgs a_Args)");
         code.WriteLine("{");
         using(code.Indent())
         {
@@ -371,7 +397,7 @@ namespace GTMH.S11n
       else
       {
         var parentInit = a_Defn.HasGTParent ? " : base(a_Args)" : "";
-        code.WriteLine($"public {a_Defn.ClassName}(IGTArgs a_Args){parentInit}");
+        code.WriteLine($"public {a_Defn.ClassName}(IGTInitArgs a_Args){parentInit}");
         code.WriteLine("{");
         using(code.Indent())
         {

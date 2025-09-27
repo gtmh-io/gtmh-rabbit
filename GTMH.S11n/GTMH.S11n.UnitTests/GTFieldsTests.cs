@@ -119,5 +119,26 @@ namespace GTMH.S11n.UnitTests
       await Assert.That(obj.Id.Code).IsEqualTo("roger");
       await Assert.That(obj.Id2.Code).IsEqualTo("beetroot");
     }
+    [Test]
+    public async ValueTask TestGTInstanceBasic()
+    {
+      var obj = new HasGTFieldsTInstance("roger");
+      await Assert.That(obj.Instance1).IsEqualTo(nameof(InstanceType));
+      await Assert.That(obj.Instance1Instance.StringValue).IsEqualTo("roger");
+      var s11n = obj.ParseS11n();
+      var _obj = new HasGTFieldsTInstance(new DictionaryConfig(s11n).ForInit());
+      await Assert.That(_obj.Instance1).IsEqualTo(nameof(InstanceType));
+      await Assert.That(_obj.Instance1Instance.StringValue).IsEqualTo("roger");
+    }
+    [Test]
+    public async ValueTask TestGTInstanceAKA()
+    {
+      await Assert.That(Math.Abs(0)).IsGreaterThan(1);
+    }
+    [Test]
+    public async ValueTask TestGTInstanceCustomParse()
+    {
+      await Assert.That(Math.Abs(0)).IsGreaterThan(1);
+    }
   }
 }

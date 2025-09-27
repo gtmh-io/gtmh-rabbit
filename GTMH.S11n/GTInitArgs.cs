@@ -4,11 +4,11 @@ using System.Text;
 
 namespace GTMH.S11n
 {
-  public class GTArgs : IGTArgs
+  public class GTInitArgs : IGTInitArgs
   {
     public static readonly string NoValue = Guid.NewGuid().ToString();
     private readonly IConfigProvider m_Provider;
-    public GTArgs(IConfigProvider a_Config)
+    public GTInitArgs(IConfigProvider a_Config)
     {
       m_Provider = a_Config;
     }
