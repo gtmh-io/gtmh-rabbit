@@ -124,11 +124,11 @@ namespace GTMH.S11n.UnitTests
     public async ValueTask TestGTInstanceBasic()
     {
       var obj = new HasGTFieldsTInstance("roger");
-      await Assert.That(obj.Instance1).IsEqualTo(nameof(InstanceType));
+      await Assert.That(obj.Instance1).IsEqualTo(typeof(InstanceType).FullName);
       await Assert.That(obj.Instance1Instance.StringValue).IsEqualTo("roger");
       var s11n = obj.ParseS11n();
       var _obj = new HasGTFieldsTInstance(new DictionaryConfig(s11n).ForInit());
-      await Assert.That(_obj.Instance1).IsEqualTo(nameof(InstanceType));
+      await Assert.That(_obj.Instance1).IsEqualTo(typeof(InstanceType).FullName);
       await Assert.That(_obj.Instance1Instance.StringValue).IsEqualTo("roger");
     }
     [Test]

@@ -18,7 +18,7 @@ namespace GTMH.S11n
       var key = m_Prefix=="" ? a_Key : $"{m_Prefix}.{a_Key}";
       m_Value.Add(key, a_Value);
     }
-    struct IC : IDisposable
+    struct Context_t : IDisposable
     {
       public Action OnDipose;
       public void Dispose()
@@ -30,7 +30,7 @@ namespace GTMH.S11n
     {
       m_Context.Push(a_Name);
       m_Prefix=string.Join(".", m_Context);
-      return new IC { OnDipose = () =>
+      return new Context_t { OnDipose = () =>
       {
         m_Context.Pop();
         m_Prefix=string.Join(".", m_Context);

@@ -12,10 +12,31 @@ namespace GTMH.S11n
     {
       m_Provider = a_Config;
     }
+    Stack<string> m_Context = new Stack<string>();
+    string m_Prefix = "";
 
     public string GetValue(string a_Key, string a_Default)
     {
-      return m_Provider.GetValue(a_Key, a_Default);
+      var key = m_Prefix == "" ? a_Key : $"{m_Prefix}.{a_Key}";
+      return m_Provider.GetValue(key, a_Default);
+    }
+    struct Context_t : IDisposable
+    {
+      public Action OnDipose;
+      public void Dispose()
+      {
+        OnDipose();
+      }
+    }
+    public IDisposable Context(string a_Name)
+    {
+      m_Context.Push(a_Name);
+      m_Prefix=string.Join(".", m_Context);
+      return new Context_t { OnDipose = () =>
+      {
+        m_Context.Pop();
+        m_Prefix=string.Join(".", m_Context);
+      } };
     }
   }
 }

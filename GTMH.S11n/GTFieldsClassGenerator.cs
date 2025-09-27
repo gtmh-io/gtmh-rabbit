@@ -333,6 +333,7 @@ namespace GTMH.S11n
         code.WriteLine(use);
       }
       code.WriteLine("using GTMH.S11n;");
+      code.WriteLine("using System.Reflection;");
       code.WriteLine("#pragma warning restore 0105");
 
       if(!string.IsNullOrEmpty(a_Defn.Namespace))
