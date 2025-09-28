@@ -11,7 +11,6 @@ namespace GTMH.S11n
 
     Stack<string> m_Context = new Stack<string>();
     string m_Prefix = "";
-
     
     public void Add(string a_Key, string a_Value)
     {
@@ -40,6 +39,11 @@ namespace GTMH.S11n
     public void S11nGather(dynamic a_Instance)
     {
       a_Instance.S11nGather(this);
+    }
+
+    public string DisolveType(object a_Value)
+    {
+      return a_Value.GetType().FullName;
     }
   }
 }
