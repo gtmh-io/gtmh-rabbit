@@ -6,7 +6,7 @@ namespace GTMH.S11n.FieldTypes
 {
   public interface IFieldType
   {
-    void WriteGather(Code code, string a_Args);
+    void WriteGather(Code code);
     void WriteInitialisation(Code code);
   }
 }

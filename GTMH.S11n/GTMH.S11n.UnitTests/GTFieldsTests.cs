@@ -123,18 +123,63 @@ namespace GTMH.S11n.UnitTests
     [Test]
     public async ValueTask TestGTInstanceBasic()
     {
-      var obj = new HasGTFieldsTInstance("roger");
-      await Assert.That(obj.Instance1).IsEqualTo(typeof(InstanceType).FullName);
-      await Assert.That(obj.Instance1Instance.StringValue).IsEqualTo("roger");
+      var obj = new HasGTFieldsTInstance("roger", "rabbit");
+      await Assert.That(obj.NewInstance).IsEqualTo(typeof(InstanceType).FullName);
+      await Assert.That(obj.NewInstanceInstance.NewStringProperty).IsEqualTo("roger");
       var s11n = obj.ParseS11n();
       var _obj = new HasGTFieldsTInstance(new DictionaryConfig(s11n).ForInit());
-      await Assert.That(_obj.Instance1).IsEqualTo(typeof(InstanceType).FullName);
-      await Assert.That(_obj.Instance1Instance.StringValue).IsEqualTo("roger");
+      await Assert.That(_obj.NewInstance).IsEqualTo(typeof(InstanceType).FullName);
+      await Assert.That(_obj.NewInstanceInstance.NewStringProperty).IsEqualTo("roger");
+      await Assert.That(_obj.OtherInstance).IsEqualTo(typeof(InstanceType).FullName);
+      await Assert.That(_obj.OtherInstanceInstance.NewStringProperty).IsEqualTo("rabbit");
     }
     [Test]
-    public async ValueTask TestGTInstanceAKA()
+    public async ValueTask TestGTInstanceAKABasline()
     {
-      await Assert.That(Math.Abs(0)).IsGreaterThan(1);
+      // baseline
+      var s11n = new Dictionary<string, string>{
+        { "NewInstance", "GTMH.S11n.UnitTests.Impl.InstanceType" },
+        { "NewInstance.NewStringProperty", "roger" },
+        { "OtherInstance", "GTMH.S11n.UnitTests.Impl.InstanceType" },
+        { "OtherInstance.NewStringProperty", "rabbit" },
+      };
+      var _obj = new HasGTFieldsTInstance(new DictionaryConfig(s11n).ForInit());
+      await Assert.That(_obj.NewInstance).IsEqualTo(typeof(InstanceType).FullName);
+      await Assert.That(_obj.NewInstanceInstance.NewStringProperty).IsEqualTo("roger");
+      await Assert.That(_obj.OtherInstance).IsEqualTo(typeof(InstanceType).FullName);
+      await Assert.That(_obj.OtherInstanceInstance.NewStringProperty).IsEqualTo("rabbit");
+    }
+    [Test]
+    public async ValueTask TestGTInstanceAKAChildProperty()
+    {
+      // child class property name changes
+      var s11n = new Dictionary<string, string>{
+        { "NewInstance", "GTMH.S11n.UnitTests.Impl.InstanceType" },
+        { "NewInstance.OldStringProperty", "roger" },
+        { "OtherInstance", "GTMH.S11n.UnitTests.Impl.InstanceType" },
+        { "OtherInstance.NewStringProperty", "rabbit" },
+      };
+      var _obj = new HasGTFieldsTInstance(new DictionaryConfig(s11n).ForInit());
+      await Assert.That(_obj.NewInstance).IsEqualTo(typeof(InstanceType).FullName);
+      await Assert.That(_obj.NewInstanceInstance.NewStringProperty).IsEqualTo("roger");
+      await Assert.That(_obj.OtherInstance).IsEqualTo(typeof(InstanceType).FullName);
+      await Assert.That(_obj.OtherInstanceInstance.NewStringProperty).IsEqualTo("rabbit");
+    }
+    [Test]
+    public async ValueTask TestGTInstanceAKAInstanceProperty()
+    {
+      // 
+      var s11n = new Dictionary<string, string>{
+        { "OldInstance", "GTMH.S11n.UnitTests.Impl.InstanceType" },
+        { "OldInstance.NewStringProperty", "roger" },
+        { "OtherInstance", "GTMH.S11n.UnitTests.Impl.InstanceType" },
+        { "OtherInstance.NewStringProperty", "rabbit" },
+      };
+      var _obj = new HasGTFieldsTInstance(new DictionaryConfig(s11n).ForInit());
+      await Assert.That(_obj.NewInstance).IsEqualTo(typeof(InstanceType).FullName);
+      await Assert.That(_obj.NewInstanceInstance.NewStringProperty).IsEqualTo("roger");
+      await Assert.That(_obj.OtherInstance).IsEqualTo(typeof(InstanceType).FullName);
+      await Assert.That(_obj.OtherInstanceInstance.NewStringProperty).IsEqualTo("rabbit");
     }
     [Test]
     public async ValueTask TestGTInstanceCustomParse()

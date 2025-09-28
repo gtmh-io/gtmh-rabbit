@@ -16,9 +16,9 @@ namespace GTMH.S11n.FieldTypes
       Attrs = a_Attrs;
     }
 
-    public void WriteGather(Code code, string a_Args)
+    public void WriteGather(Code code)
     {
-      code.WriteLine($"{a_Args}.Add(\"{this.Name}\", {this.Name}.ToString());");
+      code.WriteLine($"a_Args.Add(\"{this.Name}\", {this.Name}.ToString());");
     }
 
     public void WriteInitialisation(Code code)

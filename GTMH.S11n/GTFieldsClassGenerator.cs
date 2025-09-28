@@ -234,7 +234,7 @@ namespace GTMH.S11n
         var backingName = $"{a_Name}Instance";
         var instanceMember = a_Container.GetMembers(backingName).Single();
         var type = GetInstanceType(instanceMember);
-        return new InstanceField(a_Name, backingName, type.ToDisplayString());
+        return new InstanceField(a_Name, backingName, type.ToDisplayString(), attr);
       }
       else if(attr.Parse != null || attr.DeParse != null)
       {
@@ -372,7 +372,7 @@ namespace GTMH.S11n
       {
         foreach(var field in a_Defn.Fields)
         {
-          field.WriteGather(code, "a_Args");
+          field.WriteGather(code);
 
         }
         code.WriteLine("return a_Args;");
