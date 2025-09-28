@@ -10,5 +10,6 @@ namespace GTMH.S11n
     internal string Parse = null;
     internal string DeParse = null;
     internal bool GTInstance = false;
+    internal bool Required = false;
   }
 }

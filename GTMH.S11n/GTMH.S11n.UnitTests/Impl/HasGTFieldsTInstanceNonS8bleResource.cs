@@ -33,13 +33,11 @@ namespace GTMH.S11n.UnitTests.Impl
   public partial class HasGTFieldsTInstanceNonS8bleResource
   {
     [GTField(GTInstance =true, Parse=nameof(Parse), DeParse=nameof(DeParse), AKA="OldInterface")]
-    public readonly string Interface;
-    public readonly IHaveNonS8bleResource InterfaceInstance;
+    public readonly IHaveNonS8bleResource ? Interface;
 
     public HasGTFieldsTInstanceNonS8bleResource(string a_StringValue)
     {
-      this.Interface = typeof(HaveNonS8bleResource).FullName;
-      this.InterfaceInstance = new HaveNonS8bleResource(a_StringValue, CreateResource());
+      this.Interface = new HaveNonS8bleResource(a_StringValue, CreateResource());
     }
     public static Guid CreateResource()=>Guid.NewGuid();
     static IHaveNonS8bleResource Parse(Type a_Type, IGTInitArgs a_Args)

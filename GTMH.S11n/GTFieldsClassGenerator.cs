@@ -188,6 +188,14 @@ namespace GTMH.S11n
             }
             break;
           }
+          case "Required":
+          {
+            if(attr.Value.Value is bool boolValue)
+            {
+              rval.Required = boolValue;
+            }
+            break;
+          }
           default:
           {
             System.Diagnostics.Debugger.Launch();
@@ -230,11 +238,7 @@ namespace GTMH.S11n
       var attr = RealiseAttribute(a_AttrData);
       if(attr.GTInstance)
       {
-        // TODO - should have an analyser catching this error 
-        var backingName = $"{a_Name}Instance";
-        var instanceMember = a_Container.GetMembers(backingName).Single();
-        var type = GetInstanceType(instanceMember);
-        return new InstanceField(a_Name, backingName, type.ToDisplayString(), attr);
+        return new InstanceField(a_Name, a_Type.ToDisplayString(), attr);
       }
       else if(attr.Parse != null || attr.DeParse != null)
       {

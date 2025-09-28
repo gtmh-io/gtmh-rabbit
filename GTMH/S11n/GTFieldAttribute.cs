@@ -11,7 +11,11 @@ namespace GTMH
 	[AttributeUsage(AttributeTargets.Field|AttributeTargets.Property)]
 	public class GTFieldAttribute : System.Attribute
 	{
-		//public bool Required = false;
+    /// <summary>
+    /// This only applies to TInstances which may be null
+    /// </summary>
+		public bool Required = false;
+
 		public string EditorBrief = "";
 		/// <summary>
 		/// Indicates the field/property is reflect loadable. If this is marked true

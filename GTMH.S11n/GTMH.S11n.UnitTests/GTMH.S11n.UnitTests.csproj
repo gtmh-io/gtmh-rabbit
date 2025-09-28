@@ -8,11 +8,18 @@
     <IsPackable>false</IsPackable>
     <OutputPath>vsbin/$(Configuration)</OutputPath>
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <WarningsAsErrors>true</WarningsAsErrors>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Class1.cs" />
-  </ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    <NoWarn>1701;1702;CS8602</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    <NoWarn>1701;1702;CS8602</NoWarn>
+  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="TUnit" Version="*" />

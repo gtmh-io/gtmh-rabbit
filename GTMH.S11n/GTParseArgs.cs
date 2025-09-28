@@ -43,7 +43,8 @@ namespace GTMH.S11n
 
     public string DisolveType(object a_Value)
     {
-      return a_Value.GetType().FullName;
+      if ( a_Value == null ) return "";
+      else return a_Value.GetType().FullName;
     }
   }
 }
