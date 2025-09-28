@@ -21,8 +21,15 @@ namespace GTMH.S11n.FieldTypes
 
     public void WriteGather(Code code)
     {
-      code.WriteLine($"a_Args.Add(\"{Name}\", a_Args.DisolveType(this.{InstanceMemberName}));");
-      code.WriteLine($"using(a_Args.Context(\"{Name}\")) a_Args.S11nGather(this.{InstanceMemberName});");
+      if(Attrs.DeParse != null)
+      {
+        code.WriteLine($"{Attrs.DeParse}(\"{Name}\", this.{InstanceMemberName}, a_Args);");
+      }
+      else
+      {
+        code.WriteLine($"a_Args.Add(\"{Name}\", a_Args.DisolveType(this.{InstanceMemberName}));");
+        code.WriteLine($"using(a_Args.Context(\"{Name}\")) a_Args.S11nGather(this.{InstanceMemberName});");
+      }
     }
 
     public void WriteInitialisation(Code code)
@@ -56,9 +63,16 @@ namespace GTMH.S11n.FieldTypes
         }
         code.WriteLine($"var type=a_Args.ResolveType(this.{Name});");
         code.WriteLine($"if (type==null) throw new S11nException($\"Couldn't find type '{{this.{this.Name}}}'\");");
-        code.WriteLine("var constructor = type.GetConstructor( BindingFlags.Public | BindingFlags.Instance, null, new[] { typeof(GTMH.S11n.IGTInitArgs) }, null);");
-        code.WriteLine($"if (constructor==null) throw new S11nException($\"Type '{{this.{this.Name}}}' has no suitable constructor\");");
-        code.WriteLine($"using(a_Args.Context(paramName)) this.{InstanceMemberName}=({InterfaceType})constructor.Invoke(new object[] {{ a_Args }});");
+        if(Attrs.Parse != null)
+        {
+          code.WriteLine($"using(a_Args.Context(paramName)) this.{InstanceMemberName}={Attrs.Parse}(type, a_Args);");
+        }
+        else
+        {
+          code.WriteLine("var constructor = type.GetConstructor( BindingFlags.Public | BindingFlags.Instance, null, new[] { typeof(GTMH.S11n.IGTInitArgs) }, null);");
+          code.WriteLine($"if (constructor==null) throw new S11nException($\"Type '{{this.{this.Name}}}' has no suitable constructor\");");
+          code.WriteLine($"using(a_Args.Context(paramName)) this.{InstanceMemberName}=({InterfaceType})constructor.Invoke(new object[] {{ a_Args }});");
+        }
       }
       code.WriteLine("}");
     }

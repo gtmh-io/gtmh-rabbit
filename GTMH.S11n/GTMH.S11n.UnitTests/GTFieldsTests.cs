@@ -184,7 +184,20 @@ namespace GTMH.S11n.UnitTests
     [Test]
     public async ValueTask TestGTInstanceCustomParse()
     {
-      await Assert.That(Math.Abs(0)).IsGreaterThan(1);
+      var obj = new HasGTFieldsTInstanceNonS8bleResource("roger");
+      var s11n = obj.ParseS11n();
+      var _obj = new HasGTFieldsTInstanceNonS8bleResource(new DictionaryConfig(s11n).ForInit());
+      await Assert.That(_obj.InterfaceInstance.S8ble).IsEqualTo("roger");
+    }
+    [Test]
+    public async ValueTask TestGTInstanceCustomParseAKA()
+    {
+      var s11n = new Dictionary<string, string>{
+        {"OldInterface", "GTMH.S11n.UnitTests.Impl.HaveNonS8bleResource" },
+        {"OldInterface.S8ble", "roger" }
+      };
+      var _obj = new HasGTFieldsTInstanceNonS8bleResource(new DictionaryConfig(s11n).ForInit());
+      await Assert.That(_obj.InterfaceInstance.S8ble).IsEqualTo("roger");
     }
   }
 }
