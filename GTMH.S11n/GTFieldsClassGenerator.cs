@@ -180,11 +180,11 @@ namespace GTMH.S11n
             }
             break;
           }
-          case "GTInit":
+          case "Instance":
           {
             if(attr.Value.Value is bool boolValue)
             {
-              rval.GTInit = boolValue;
+              rval.Instance = boolValue;
             }
             break;
           }
@@ -237,7 +237,7 @@ namespace GTMH.S11n
     private static IFieldType ParseAttribute(string a_Name, ITypeSymbol a_Type, INamedTypeSymbol a_Container, AttributeData a_AttrData)
     {
       var attr = RealiseAttribute(a_AttrData);
-      if(attr.GTInit)
+      if(attr.Instance)
       {
         if ( a_Type is INamedTypeSymbol nts )
         {

@@ -20,7 +20,7 @@ namespace GTMH.S11n
 		/// Indicates the field/property can be polymorphically loaded
 		/// load shit
 		/// </summary>
-		public bool GTInit = false;
+		public bool Instance = false;
 
 		/// <summary>
 		/// Not visible in the editor but configured via GTFields.Init

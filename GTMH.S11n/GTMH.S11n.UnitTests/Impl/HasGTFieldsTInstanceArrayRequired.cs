@@ -10,7 +10,7 @@ namespace GTMH.S11n.UnitTests.Impl
     /// <summary>
     /// Setting Required to be true allows us to specify non-nullable instance types
     /// </summary>
-    [GTField(GTInit=true, Required=true)]
+    [GTField(Instance=true, Required=true)]
     public ImmutableArray<Interface_t> Instances { get; }
     public HasGTFieldsTInstanceArrayRequired(params Interface_t[] a_Instances)
     {
