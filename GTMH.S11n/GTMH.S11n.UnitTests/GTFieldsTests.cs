@@ -218,7 +218,81 @@ namespace GTMH.S11n.UnitTests
     [Test]
     public async ValueTask TestGTInstanceArrayEmpty()
     {
-      await Assert.That(Math.Abs(0)).IsGreaterThan(1);
+      var obj = new HasGTFieldsTInstanceArray();
+      var s11n = obj.ParseS11n();
+      var _obj = new HasGTFieldsTInstanceArray(new DictionaryConfig(s11n).ForInit());
+      await Assert.That(_obj.Instances.Length).IsEqualTo(0);
+    }
+    [Test]
+    public async ValueTask TestGTInstanceArrayNulls()
+    {
+      var obj = new HasGTFieldsTInstanceArray(new InterfaceImplA("roger"), null, new InterfaceImplB("rabbit"));
+      var s11n = obj.ParseS11n();
+      var _obj = new HasGTFieldsTInstanceArray(new DictionaryConfig(s11n).ForInit());
+      await Assert.That(_obj.Instances.Length).IsEqualTo(3);
+      await Assert.That(_obj.Instances[0].Value).IsEqualTo("roger_A");
+      await Assert.That(_obj.Instances[1]).IsNull();
+      await Assert.That(_obj.Instances[2].Value).IsEqualTo("rabbit_B");
+    }
+    [Test]
+    public async ValueTask TestGTInstanceArrayAKA()
+    {
+      var s11n = new Dictionary<string, string>
+      {
+        { "OldInstances.Array-Length", "2"},
+        { "OldInstances.0", "GTMH.S11n.UnitTests.Impl.InterfaceImplA" },
+        { "OldInstances.0.Value", "roger_A" },
+        { "OldInstances.1", "GTMH.S11n.UnitTests.Impl.InterfaceImplB" },
+        { "OldInstances.1.Value", "rabbit_B"}
+      };
+      var _obj = new HasGTFieldsTInstanceArrayAKA(new DictionaryConfig(s11n).ForInit());
+      await Assert.That(_obj.Instances.Length).IsEqualTo(2);
+      await Assert.That(_obj.Instances[0].Value).IsEqualTo("roger_A");
+      await Assert.That(_obj.Instances[1].Value).IsEqualTo("rabbit_B");
+    }
+    [Test]
+    public async ValueTask TestGTInstanceArrayCustomPDP()
+    {
+      var obj = new HasGTFieldsTInstanceArrayCustomS11n(new InterfaceImplA("roger"), null, new InterfaceImplB("rabbit"));
+      var s11n = obj.ParseS11n();
+      var _obj = new HasGTFieldsTInstanceArrayCustomS11n(new DictionaryConfig(s11n).ForInit());
+      await Assert.That(_obj.Instances.Length).IsEqualTo(3);
+      await Assert.That(_obj.Instances[0].Value).IsEqualTo("roger_A");
+      await Assert.That(_obj.Instances[1]).IsNull();
+      await Assert.That(_obj.Instances[2].Value).IsEqualTo("rabbit_B");
+    }
+    [Test]
+    public async ValueTask TestGTInstanceArrayCustomPDPAKA()
+    {
+      var s11n = new Dictionary<string, string>
+      {
+        { "OldInstances.Array-Length", "2"},
+        { "OldInstances.0", "GTMH.S11n.UnitTests.Impl.InterfaceImplA" },
+        { "OldInstances.0.Value", "roger_A" },
+        { "OldInstances.1", "GTMH.S11n.UnitTests.Impl.InterfaceImplB" },
+        { "OldInstances.1.Value", "rabbit_B"}
+      };
+      var _obj = new HasGTFieldsTInstanceArrayCustomS11nAKA(new DictionaryConfig(s11n).ForInit());
+      await Assert.That(_obj.Instances.Length).IsEqualTo(2);
+      await Assert.That(_obj.Instances[0].Value).IsEqualTo("roger_A");
+      await Assert.That(_obj.Instances[1].Value).IsEqualTo("rabbit_B");
+    }
+    [Test]
+    public async ValueTask TestGTInstanceArrayCustomPDPAKA3()
+    {
+      var s11n = new Dictionary<string, string>
+      {
+        { "OldInstances.Array-Length", "3"},
+        { "OldInstances.0", "GTMH.S11n.UnitTests.Impl.InterfaceImplA" },
+        { "OldInstances.0.Value", "roger_A" },
+        { "OldInstances.2", "GTMH.S11n.UnitTests.Impl.InterfaceImplB" },
+        { "OldInstances.2.Value", "rabbit_B"}
+      };
+      var _obj = new HasGTFieldsTInstanceArrayCustomS11nAKA(new DictionaryConfig(s11n).ForInit());
+      await Assert.That(_obj.Instances.Length).IsEqualTo(3);
+      await Assert.That(_obj.Instances[0].Value).IsEqualTo("roger_A");
+      await Assert.That(_obj.Instances[1]).IsNull();
+      await Assert.That(_obj.Instances[2].Value).IsEqualTo("rabbit_B");
     }
   }
 }

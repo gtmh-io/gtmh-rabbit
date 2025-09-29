@@ -33,6 +33,7 @@ namespace GTMH.S11n.FieldTypes
 
     public void WriteInitialisation(Code code)
     {
+      // if change here note to change in InstanceArrayField WriteInitialisation
       code.WriteLine("{");
       using(code.Indent())
       {
