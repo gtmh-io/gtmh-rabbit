@@ -294,5 +294,16 @@ namespace GTMH.S11n.UnitTests
       await Assert.That(_obj.Instances[1]).IsNull();
       await Assert.That(_obj.Instances[2].Value).IsEqualTo("rabbit_B");
     }
+    [Test]
+    public async ValueTask TestGTInstanceArrayRequired()
+    {
+      // that this compiles is the real test
+      var obj = new HasGTFieldsTInstanceArrayRequired(new InterfaceImplA("roger"), new InterfaceImplB("rabbit"));
+      var s11n = obj.ParseS11n();
+      var _obj = new HasGTFieldsTInstanceArrayRequired(new DictionaryConfig(s11n).ForInit());
+      await Assert.That(_obj.Instances.Length).IsEqualTo(2);
+      await Assert.That(_obj.Instances[0].Value).IsEqualTo("roger_A");
+      await Assert.That(_obj.Instances[1].Value).IsEqualTo("rabbit_B");
+    }
   }
 }
