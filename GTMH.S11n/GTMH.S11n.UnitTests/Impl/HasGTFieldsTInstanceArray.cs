@@ -8,7 +8,7 @@ namespace GTMH.S11n.UnitTests.Impl
 {
   public partial class HasGTFieldsTInstanceArray
   {
-    [GTField(Instance=true)]
+    [GTS11n(Instance=true)]
     public ImmutableArray<Interface_t?> Instances { get; }
     public HasGTFieldsTInstanceArray(params Interface_t?[] a_Instances)
     {
@@ -17,7 +17,7 @@ namespace GTMH.S11n.UnitTests.Impl
   }
   public partial class HasGTFieldsTInstanceArrayAKA
   {
-    [GTField(Instance=true, AKA="OldInstances")]
+    [GTS11n(Instance=true, AKA="OldInstances")]
     public ImmutableArray<Interface_t?> Instances { get; }
     public HasGTFieldsTInstanceArrayAKA(params Interface_t?[] a_Instances)
     {
@@ -26,7 +26,7 @@ namespace GTMH.S11n.UnitTests.Impl
   }
   public partial class HasGTFieldsTInstanceArrayCustomS11n
   {
-    [GTField(Instance=true, Parse=nameof(Parse), DeParse=nameof(DeParse))]
+    [GTS11n(Instance=true, Parse=nameof(Parse), DeParse=nameof(DeParse))]
     public ImmutableArray<Interface_t?> Instances { get; }
     public HasGTFieldsTInstanceArrayCustomS11n(params Interface_t?[] a_Instances)
     {
@@ -49,7 +49,7 @@ namespace GTMH.S11n.UnitTests.Impl
   }
   public partial class HasGTFieldsTInstanceArrayCustomS11nAKA
   {
-    [GTField(Instance=true, Parse=nameof(Parse), DeParse=nameof(DeParse), AKA ="OldInstances")]
+    [GTS11n(Instance=true, Parse=nameof(Parse), DeParse=nameof(DeParse), AKA ="OldInstances")]
     public ImmutableArray<Interface_t?> Instances { get; }
     public HasGTFieldsTInstanceArrayCustomS11nAKA(params Interface_t?[] a_Instances)
     {

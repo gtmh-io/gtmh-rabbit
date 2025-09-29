@@ -65,8 +65,8 @@ namespace GTMH.S11n
       {
         if (member is IPropertySymbol property)
         {
-          // Check for GTFieldAttribute on this property
-          var gtfAttr = property.GetAttributes().FirstOrDefault(attr => attr.AttributeClass?.ToDisplayString() == "GTMH.S11n.GTFieldAttribute");
+          // Check for GTS11nAttribute on this property
+          var gtfAttr = property.GetAttributes().FirstOrDefault(attr => attr.AttributeClass?.ToDisplayString() == "GTMH.S11n.GTS11nAttribute");
           if(gtfAttr != null)
           {
             attrs.Add(ParseAttribute(property, classSymbol, gtfAttr));
@@ -74,7 +74,7 @@ namespace GTMH.S11n
         }
         else if( member is IFieldSymbol symbol)
         {
-          var gtfAttr = symbol.GetAttributes().FirstOrDefault(attr => attr.AttributeClass?.ToDisplayString() == "GTMH.S11n.GTFieldAttribute");
+          var gtfAttr = symbol.GetAttributes().FirstOrDefault(attr => attr.AttributeClass?.ToDisplayString() == "GTMH.S11n.GTS11nAttribute");
           if(gtfAttr != null)
           {
             attrs.Add(ParseAttribute(symbol, classSymbol, gtfAttr));
@@ -121,7 +121,7 @@ namespace GTMH.S11n
         {
           foreach(var attr in attrs)
           {
-            if(attr.AttributeClass.ToDisplayString() == "GTMH.S11n.GTFieldCustomConstructorAttribute")
+            if(attr.AttributeClass.ToDisplayString() == "GTMH.S11n.GTS11nInitAttribute")
             {
               rval.Add(constructor);
             }
@@ -198,7 +198,8 @@ namespace GTMH.S11n
           }
           default:
           {
-            System.Diagnostics.Debugger.Launch();
+            // TODO - better
+            //System.Diagnostics.Debugger.Launch();
             throw new NotImplementedException();
           }
         }

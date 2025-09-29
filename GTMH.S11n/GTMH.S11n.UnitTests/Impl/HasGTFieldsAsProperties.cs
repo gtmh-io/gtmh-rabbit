@@ -6,12 +6,12 @@ namespace GTMH.S11n.UnitTests.Impl
 {
   public partial class HasGTFieldsAsProperties
   {
-    [GTField]
+    [GTS11n]
     public string StringValue { get; set; } = "StringValueDefault";
-    [GTField]
+    [GTS11n]
     public int IntValue { get; set; } = 69;
     public enum Value_t { ValueA = 1, ValueB = 2 };
-    [GTField]
+    [GTS11n]
     public Value_t EnumValue { get; set; } = Value_t.ValueA;
     public HasGTFieldsAsProperties(string a_StringValue, int a_IntValue, Value_t a_EnumValue)
     {

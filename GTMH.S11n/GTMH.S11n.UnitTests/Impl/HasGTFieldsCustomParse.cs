@@ -10,10 +10,10 @@ namespace GTMH.S11n.UnitTests.Impl
     {
       public string Code;
     }
-    [GTField(Parse=nameof(Parse), DeParse=nameof(Deparse))]
+    [GTS11n(Parse=nameof(Parse), DeParse=nameof(Deparse))]
     public readonly CustomType Id = new CustomType { Code="XYZ" };
 
-    [GTField(Parse=nameof(Parse), DeParse=nameof(Deparse), AKA ="OldId2")]
+    [GTS11n(Parse=nameof(Parse), DeParse=nameof(Deparse), AKA ="OldId2")]
     public readonly CustomType Id2 = new CustomType { Code="XYZ" };
 
     public HasGTFieldsCustomParse(string a_Code, string a_Code2)

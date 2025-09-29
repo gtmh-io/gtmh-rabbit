@@ -14,7 +14,7 @@ namespace GTMH.S11n.UnitTests.Impl
   }
   public partial class HaveNonS8bleResource : IHaveNonS8bleResource
   {
-    [GTField]
+    [GTS11n]
     public string S8ble { get; private set;}
     public Guid NonS8ble { get; }
     public HaveNonS8bleResource(string a_string, Guid a_Guid)
@@ -22,7 +22,7 @@ namespace GTMH.S11n.UnitTests.Impl
       S8ble=a_string;
       NonS8ble=a_Guid;
     }
-    [GTFieldCustomConstructor]
+    [GTS11nInit]
     public HaveNonS8bleResource(IGTInitArgs a_Args, Guid a_Guid)
     {
       this.SetS11n(a_Args);
@@ -32,7 +32,7 @@ namespace GTMH.S11n.UnitTests.Impl
 
   public partial class HasGTFieldsTInstanceNonS8bleResource
   {
-    [GTField(Instance =true, Parse=nameof(Parse), DeParse=nameof(DeParse), AKA="OldInterface")]
+    [GTS11n(Instance =true, Parse=nameof(Parse), DeParse=nameof(DeParse), AKA="OldInterface")]
     public readonly IHaveNonS8bleResource ? Interface;
 
     public HasGTFieldsTInstanceNonS8bleResource(string a_StringValue)

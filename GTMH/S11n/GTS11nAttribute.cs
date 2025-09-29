@@ -8,7 +8,7 @@ using System.Reflection;
 namespace GTMH.S11n
 {
 	[AttributeUsage(AttributeTargets.Field|AttributeTargets.Property)]
-	public class GTFieldAttribute : System.Attribute
+	public class GTS11nAttribute : System.Attribute
 	{
     /// <summary>
     /// This only applies to TInstances which may be null

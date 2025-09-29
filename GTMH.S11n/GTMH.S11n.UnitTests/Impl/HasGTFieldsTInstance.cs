@@ -10,7 +10,7 @@ namespace GTMH.S11n.UnitTests.Impl
   }
   public partial class InstanceType : IInstanceType
   {
-    [GTField(AKA="OldStringProperty")]
+    [GTS11n(AKA="OldStringProperty")]
     public string NewStringProperty { get; set; }
     public InstanceType(string a_Value)
     {
@@ -20,9 +20,9 @@ namespace GTMH.S11n.UnitTests.Impl
 
   public partial class HasGTFieldsTInstance
   {
-    [GTField(Instance=true, AKA ="OldInstance")]
+    [GTS11n(Instance=true, AKA ="OldInstance")]
     public IInstanceType ?NewInstance;
-    [GTField(Instance=true)]
+    [GTS11n(Instance=true)]
     public IInstanceType ?OtherInstance;
     public HasGTFieldsTInstance(string a_NewInstanceValue, string a_OtherInstanceValue)
     {

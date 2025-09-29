@@ -6,13 +6,13 @@ namespace GTMH.S11n.UnitTests.Impl
 {
   public partial class HasGTFieldsCustomConstructor
   {
-    [GTField]
+    [GTS11n]
     public string StringValue { get; private set; } = "AStringValue";
     public HasGTFieldsCustomConstructor(string a_StringValue)
     {
       StringValue = a_StringValue;
     }
-    [GTFieldCustomConstructor]
+    [GTS11nInit]
     public HasGTFieldsCustomConstructor(IGTInitArgs a_Args)
     {
       this.SetS11n(a_Args);

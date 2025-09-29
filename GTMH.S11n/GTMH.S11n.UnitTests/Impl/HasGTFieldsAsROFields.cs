@@ -6,12 +6,12 @@ namespace GTMH.S11n.UnitTests.Impl
 {
   public partial class HasGTFieldsAsROFields
   {
-    [GTField]
+    [GTS11n]
     public readonly string StringValue  = "StringValueDefault";
-    [GTField]
+    [GTS11n]
     public readonly int IntValue = 69;
     public enum Value_t { ValueA = 1, ValueB = 2 };
-    [GTField]
+    [GTS11n]
     public readonly Value_t EnumValue = Value_t.ValueA;
     public HasGTFieldsAsROFields(string a_StringValue, int a_IntValue, Value_t a_EnumValue)
     {

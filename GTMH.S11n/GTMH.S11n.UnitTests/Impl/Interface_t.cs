@@ -10,7 +10,7 @@ namespace GTMH.S11n.UnitTests.Impl
   }
   public partial class InterfaceImplA : Interface_t
   {
-    [GTField]
+    [GTS11n]
     public string Value { get; }
     public InterfaceImplA(string a_Value)
     {
@@ -19,7 +19,7 @@ namespace GTMH.S11n.UnitTests.Impl
   }
   public partial class InterfaceImplB : Interface_t
   {
-    [GTField]
+    [GTS11n]
     public string Value { get; }
     public InterfaceImplB(string a_Value)
     {

@@ -6,7 +6,7 @@ namespace GTMH.S11n.UnitTests.Impl
 {
   public partial class HasGTFieldsBase
   {
-    [GTField]
+    [GTS11n]
     public readonly string BaseStringValue;
     public HasGTFieldsBase(string a_BaseValue)
     {
@@ -15,7 +15,7 @@ namespace GTMH.S11n.UnitTests.Impl
   }
   public partial class HasGTFieldsDerived : HasGTFieldsBase
   {
-    [GTField]
+    [GTS11n]
     public readonly string DerivedStringValue;
     public HasGTFieldsDerived(string a_DerivedValue, string a_BaseValue) : base(a_BaseValue)
     {
