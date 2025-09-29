@@ -6,9 +6,9 @@ namespace GTMH.S11n.UnitTests.Impl
 {
   public partial class HasGTFieldsTInstanceRequired
   {
-    [GTField(GTInstance=true, Required=true)]
+    [GTField(GTInit=true, Required=true)]
     public readonly Interface_t ? Required;
-    [GTField(GTInstance=true)]
+    [GTField(GTInit=true)]
     public readonly Interface_t ? Optional;
     public HasGTFieldsTInstanceRequired(Interface_t a_Required, Interface_t? a_Optional = null)
     {

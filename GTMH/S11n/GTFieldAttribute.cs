@@ -5,8 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 
-// not in the reflection namespace
-namespace GTMH
+namespace GTMH.S11n
 {
 	[AttributeUsage(AttributeTargets.Field|AttributeTargets.Property)]
 	public class GTFieldAttribute : System.Attribute
@@ -18,12 +17,10 @@ namespace GTMH
 
 		public string EditorBrief = "";
 		/// <summary>
-		/// Indicates the field/property is reflect loadable. If this is marked true
-		/// then the declaring class should have a field/property of type interface
-		/// which is named Name+"Instance". If setup this way GTFields.Init can magically
+		/// Indicates the field/property can be polymorphically loaded
 		/// load shit
 		/// </summary>
-		public bool GTInstance = false;
+		public bool GTInit = false;
 
 		/// <summary>
 		/// Not visible in the editor but configured via GTFields.Init
@@ -41,11 +38,12 @@ namespace GTMH
 		//public bool DelayedInit = false;
 
 		/// <summary>
-		/// The item may have been named, this was it's old name
+		/// The item may have been renamed, this was it's old name
 		/// </summary>
 		public string ? AKA = null;
     /// <summary>
-    /// For custome parse, serialise
+    /// For custome parse - turn string type representation to an r-value.
+    /// For pod the Parse
     /// </summary>
     public string ? Parse = null;
     public string ? DeParse = null;

@@ -20,9 +20,9 @@ namespace GTMH.S11n.UnitTests.Impl
 
   public partial class HasGTFieldsTInstance
   {
-    [GTField(GTInstance=true, AKA ="OldInstance")]
+    [GTField(GTInit=true, AKA ="OldInstance")]
     public IInstanceType ?NewInstance;
-    [GTField(GTInstance=true)]
+    [GTField(GTInit=true)]
     public IInstanceType ?OtherInstance;
     public HasGTFieldsTInstance(string a_NewInstanceValue, string a_OtherInstanceValue)
     {

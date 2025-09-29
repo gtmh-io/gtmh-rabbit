@@ -66,7 +66,7 @@ namespace GTMH.S11n
         if (member is IPropertySymbol property)
         {
           // Check for GTFieldAttribute on this property
-          var gtfAttr = property.GetAttributes().FirstOrDefault(attr => attr.AttributeClass?.Name == "GTFieldAttribute" || attr.AttributeClass?.ToDisplayString() == "GTMH.S11n.GTFieldAttribute");
+          var gtfAttr = property.GetAttributes().FirstOrDefault(attr => attr.AttributeClass?.ToDisplayString() == "GTMH.S11n.GTFieldAttribute");
           if(gtfAttr != null)
           {
             attrs.Add(ParseAttribute(property, classSymbol, gtfAttr));
@@ -74,7 +74,7 @@ namespace GTMH.S11n
         }
         else if( member is IFieldSymbol symbol)
         {
-          var gtfAttr = symbol.GetAttributes().FirstOrDefault(attr => attr.AttributeClass?.Name == "GTFieldAttribute" || attr.AttributeClass?.ToDisplayString() == "GTMH.S11n.GTFieldAttribute");
+          var gtfAttr = symbol.GetAttributes().FirstOrDefault(attr => attr.AttributeClass?.ToDisplayString() == "GTMH.S11n.GTFieldAttribute");
           if(gtfAttr != null)
           {
             attrs.Add(ParseAttribute(symbol, classSymbol, gtfAttr));
@@ -180,11 +180,11 @@ namespace GTMH.S11n
             }
             break;
           }
-          case "GTInstance":
+          case "GTInit":
           {
             if(attr.Value.Value is bool boolValue)
             {
-              rval.GTInstance = boolValue;
+              rval.GTInit = boolValue;
             }
             break;
           }
@@ -233,12 +233,27 @@ namespace GTMH.S11n
       }
     }
 
+    static readonly Regex REArray= new Regex("System.Collections.Immutable.ImmutableArray<.*>");
     private static IFieldType ParseAttribute(string a_Name, ITypeSymbol a_Type, INamedTypeSymbol a_Container, AttributeData a_AttrData)
     {
       var attr = RealiseAttribute(a_AttrData);
-      if(attr.GTInstance)
+      if(attr.GTInit)
       {
+        if ( a_Type is INamedTypeSymbol nts )
+        {
+          if(REArray.IsMatch(nts.ToDisplayString()))
+          {
+            if(nts.TypeArguments.Length > 0)
+            {
+              if(nts.TypeArguments[0] is INamedTypeSymbol t_nts)
+              {
+                return new InstanceArrayField(a_Name, t_nts.ToDisplayString(), attr);
+              }
+            }
+          }
+        }
         return new InstanceField(a_Name, a_Type.ToDisplayString(), attr);
+
       }
       else if(attr.Parse != null || attr.DeParse != null)
       {

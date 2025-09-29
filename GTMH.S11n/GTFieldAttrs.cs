@@ -9,7 +9,7 @@ namespace GTMH.S11n
     internal string AKA = null;
     internal string Parse = null;
     internal string DeParse = null;
-    internal bool GTInstance = false;
+    internal bool GTInit = false;
     internal bool Required = false;
   }
 }

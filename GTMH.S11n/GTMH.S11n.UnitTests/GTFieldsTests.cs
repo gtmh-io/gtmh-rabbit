@@ -202,11 +202,15 @@ namespace GTMH.S11n.UnitTests
       var _obj = new HasGTFieldsTInstanceNonS8bleResource(new DictionaryConfig(s11n).ForInit());
       await Assert.That(_obj.Interface.S8ble).IsEqualTo("roger");
     }
-    /*[Test]
+    [Test]
     public async ValueTask TestGTInstanceArray()
     {
       var obj = new HasGTFieldsTInstanceArray(new InterfaceImplA("roger"), new InterfaceImplB("rabbit"));
+      await Assert.That(obj.Instances.Length).IsEqualTo(2);
+      await Assert.That(obj.Instances[0].Value).IsEqualTo("roger_A");
+      await Assert.That(obj.Instances[1].Value).IsEqualTo("rabbit_B");
       //var s11n = obj.ParseS11n();
-    }*/
+      //var _obj = new HasGTFieldsTInstanceArray(new DictionaryConfig(s11n).ForInit());
+    }
   }
 }

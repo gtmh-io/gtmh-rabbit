@@ -32,7 +32,7 @@ namespace GTMH.S11n.UnitTests.Impl
 
   public partial class HasGTFieldsTInstanceNonS8bleResource
   {
-    [GTField(GTInstance =true, Parse=nameof(Parse), DeParse=nameof(DeParse), AKA="OldInterface")]
+    [GTField(GTInit =true, Parse=nameof(Parse), DeParse=nameof(DeParse), AKA="OldInterface")]
     public readonly IHaveNonS8bleResource ? Interface;
 
     public HasGTFieldsTInstanceNonS8bleResource(string a_StringValue)
