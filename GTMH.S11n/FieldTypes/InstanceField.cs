@@ -19,6 +19,7 @@ namespace GTMH.S11n.FieldTypes
 
     public void WriteGather(Code code)
     {
+      // if change here note to change in InstanceArrayField WriteGather
       if(Attrs.DeParse != null)
       {
         code.WriteLine($"if ( this.{Name} !=null) {Attrs.DeParse}(\"{Name}\", this.{Name}, a_Args);");
