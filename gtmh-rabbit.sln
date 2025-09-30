@@ -57,10 +57,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GTMH.GRPC.Discovery.CodeGen
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GTMH.GRPC.Discovery.UnitTests", "GTMH.GRPC.Discovery\GTMH.GRPC.Discovery.UnitTests\GTMH.GRPC.Discovery.UnitTests.csproj", "{DFF3DD38-1593-403A-A103-F0E4C414478B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GTMH.S11n", "GTMH.S11n\GTMH.S11n.csproj", "{39FBAECC-401D-4A5C-A1BD-84973F1732AF}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GTMH.S11n.UnitTests", "GTMH.S11n\GTMH.S11n.UnitTests\GTMH.S11n.UnitTests.csproj", "{16BE860A-F3C0-4AE4-A612-16BA376DE7E8}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
