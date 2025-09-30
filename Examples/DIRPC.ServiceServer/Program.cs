@@ -4,11 +4,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-#if WINDOWS
-using Microsoft.Extensions.Hosting.WindowsServices;
-#elif LINUX
-using Microsoft.Extensions.Hosting.Systemd;
-#endif
+//#if WINDOWS
+//using Microsoft.Extensions.Hosting.WindowsServices;
+//#elif LINUX
+//using Microsoft.Extensions.Hosting.Systemd;
+//#endif
 
 
 using Serilog;
