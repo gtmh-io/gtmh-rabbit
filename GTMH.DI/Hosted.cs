@@ -74,7 +74,7 @@ public static class Hosted
       }
     }
 #elif LINUX
-  if(!a_Args.HasCmdLine("--console"))
+  if(!a_Args.HasCmdLineFlag("--console"))
   {
     builder.Services.AddSystemd();
   }
