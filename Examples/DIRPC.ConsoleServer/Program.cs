@@ -38,7 +38,7 @@ try
 
   // GTMH sepcific config
   // have appsettings stuff read
-  builder.AddGTMHConfig(args, RPCClientConfig.GetCommandLineMappings());
+  builder.AddStdConfig(args, RPCClientConfig.GetCommandLineMappings());
   // no decryption
   builder.Services.AddSingleton<IDecryptor, PlainText>();
   // shared config

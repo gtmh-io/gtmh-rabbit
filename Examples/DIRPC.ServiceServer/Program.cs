@@ -4,13 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-//#if WINDOWS
-//using Microsoft.Extensions.Hosting.WindowsServices;
-//#elif LINUX
-//using Microsoft.Extensions.Hosting.Systemd;
-//#endif
-
-
 using Serilog;
 
 using GTMH.DI;
@@ -32,11 +25,11 @@ try
   var builder = Host.CreateApplicationBuilder(new HostApplicationBuilderSettings { ContentRootPath = AppContext.BaseDirectory, EnvironmentName = environmentName } );
   builder.Services.AddHostedService<Worker>();
 
-  builder.SetPlaformService("DROPS.TestWorker");
+  builder.SetPlaformService(args);
 
   // GTMH sepcific config
   // have appsettings stuff read
-  builder.AddGTMHConfig(args, RPCClientConfig.GetCommandLineMappings());
+  builder.AddStdConfig(args, RPCClientConfig.GetCommandLineMappings());
   // no decryption
   builder.Services.AddSingleton<IDecryptor, PlainText>();
   // shared config

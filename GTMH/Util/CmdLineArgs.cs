@@ -8,7 +8,7 @@ namespace GTMH.Util
   {
     public static string GetCmdLine(this string[] args, string a_ArgName, string a_Default)
     {
-      a_ArgName = a_ArgName.Trim('-');
+      a_ArgName = a_ArgName.Trim().Trim('-');
       return args.FirstOrDefault(arg =>
       {
         return arg.StartsWith($"--{a_ArgName}=")||arg.StartsWith($"-{a_ArgName}=");
@@ -16,7 +16,7 @@ namespace GTMH.Util
     }
     public static string ? GetCmdLine(this string[] args, string a_ArgName)
     {
-      a_ArgName = a_ArgName.Trim('-');
+      a_ArgName = a_ArgName.Trim().Trim('-');
       return args.FirstOrDefault(arg =>
       {
         return arg.StartsWith($"--{a_ArgName}=")||arg.StartsWith($"-{a_ArgName}=");
@@ -27,6 +27,14 @@ namespace GTMH.Util
       var idx = a_KVP.IndexOf('=');
       var rval = a_KVP.Substring(idx+1);
       return string.IsNullOrEmpty(rval)?null: rval;
+    }
+    public static bool HasCmdLineFlag(this string[] args, string a_FlagName)
+    {
+      a_FlagName=a_FlagName.Trim().Trim('-');
+      return args.Any( arg=>
+      {
+        return arg==$"--{a_FlagName}" || arg==$"-{a_FlagName}";
+      });
     }
   }
 }

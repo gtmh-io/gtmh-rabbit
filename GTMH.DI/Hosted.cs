@@ -1,5 +1,6 @@
 ﻿using GTMH.DI.Security;
 using GTMH.Security;
+using GTMH.Util;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,7 +22,7 @@ public static class Hosted
 
   public static IHostApplicationBuilder AddGTMHConfig(this IHostApplicationBuilder builder)
   {
-    return builder.AddGTMHConfig(null, null);
+    return builder.AddStdConfig(null, null);
   }
 
   public static IHostApplicationBuilder AddGTMHConfig(this IHostApplicationBuilder builder, string[] args, Dictionary<string, string> a_MappingsA, Dictionary<string,string> a_MappingsB, params Dictionary<string,string> [] a_VA)
@@ -33,10 +34,10 @@ public static class Hosted
     {
       foreach (var kvp in mapping) mappings.Add(kvp.Key, kvp.Value);
     }
-    return builder.AddGTMHConfig(args, mappings);
+    return builder.AddStdConfig(args, mappings);
   }
 
-  public static IHostApplicationBuilder AddGTMHConfig(this IHostApplicationBuilder builder, string [] ? args, Dictionary<string, string> ? a_CmdLineMappings = null)
+  public static IHostApplicationBuilder AddStdConfig(this IHostApplicationBuilder builder, string [] ? args, Dictionary<string, string> ? a_CmdLineMappings = null)
   {
     builder.Configuration
       .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
@@ -45,14 +46,20 @@ public static class Hosted
       .AddCommandLine(args??Array.Empty<string>(), a_CmdLineMappings);
       return builder;
   }
-  public static IHostApplicationBuilder SetPlaformService(this IHostApplicationBuilder builder, string ? a_ServiceName=null)
+
+  public static IHostApplicationBuilder SetPlaformService(this IHostApplicationBuilder builder, string [] a_Args)
   {
 #if WINDOWS
-    if ( a_ServiceName == null ) throw new ArgumentNullException("Expect a service name");
-    builder.Services.AddWindowsService(options =>
+    if(!a_Args.HasCmdLineFlag("--console"))
     {
+      var a_ServiceName = a_Args.GetCmdLine("WindowsServiceName");
+      if(a_ServiceName == null)
+        throw new ArgumentNullException("Expect either --console or a service name specified via --WindowsServiceName=<the_service_name>");
+      builder.Services.AddWindowsService(options =>
+      {
         options.ServiceName = a_ServiceName;
-    });
+      });
+    }
     if (System.IO.Directory.GetCurrentDirectory().ToLower().StartsWith(@"c:\windows"))
     {
       // deal with windows starting services in dumb places
@@ -67,7 +74,10 @@ public static class Hosted
       }
     }
 #elif LINUX
-  builder.Services.AddSystemd();
+  if(!a_Args.HasCmdLine("--console"))
+  {
+    builder.Services.AddSystemd();
+  }
 #endif
     return builder;
   }
