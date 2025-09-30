@@ -5,6 +5,8 @@ using System.Text;
 
 namespace GTMH.Security;
 
+// based off own code, leaning on claude. sorry not sorry
+
 public sealed class Cipher
 {
   private const int SaltSize = 32; // 256 bits
@@ -215,107 +217,5 @@ public sealed class Cipher
 
     throw new FormatException("Invalid Cipher string format");
   }
-
-  /// <summary>
-  /// Alternative format using binary serialization
-  /// </summary>
-  public byte[] ToBytes()
-  {
-    using var ms = new MemoryStream();
-    using var writer = new BinaryWriter(ms);
-
-    // Write magic header
-    writer.Write(Encoding.ASCII.GetBytes(HeaderPrefix));
-
-    // Write version
-    writer.Write(CurrentVersion);
-
-    // Write data length and data
-    writer.Write(EncryptedData.Length);
-    writer.Write(EncryptedData.Span);
-
-    return ms.ToArray();
-  }
-
-  /// <summary>
-  /// Try parse from binary format
-  /// </summary>
-  public static bool TryParseBytes(ReadOnlySpan<byte> data, out Cipher? cipher)
-  {
-    cipher = null;
-
-    if(data.Length < HeaderPrefixLength + 1 + 4) // header + version + length
-      return false;
-
-    // Check magic header
-    var headerBytes = Encoding.ASCII.GetBytes(HeaderPrefix);
-    if(!data.Slice(0, HeaderPrefixLength).SequenceEqual(headerBytes))
-      return false;
-
-    var position = HeaderPrefixLength;
-
-    // Read version
-    var version = data[position++];
-    if(version != CurrentVersion)
-      return false;
-
-    // Read data length
-    var dataLength = BitConverter.ToInt32(data.Slice(position, 4));
-    position += 4;
-
-    if(dataLength < 0 || dataLength > MaxPayloadSize)
-      return false;
-
-    if(data.Length < position + dataLength)
-      return false;
-
-    // Read encrypted data
-    var encryptedData = data.Slice(position, dataLength).ToArray();
-
-    cipher = new Cipher(encryptedData);
-    return true;
-  }
-
-  /// <summary>
-  /// Convenience method for round-trip testing
-  /// </summary>
-  public static bool RoundTripTest(string originalText, string password)
-  {
-    try
-    {
-      // Encrypt
-      var cipher = Encrypt(originalText, password);
-
-      // Convert to string and back
-      var stringForm = cipher.ToString();
-      if(!TryParse(stringForm, out var parsedCipher) || parsedCipher == null)
-        return false;
-
-      // Decrypt
-      var decrypted = parsedCipher.DecryptString(password);
-
-      return originalText == decrypted;
-    }
-    catch
-    {
-      return false;
-    }
-  }
-
-  // Serialization helpers
-  public string ToBase64() => Convert.ToBase64String(EncryptedData.Span);
-
-  public static Cipher FromBase64(string base64)
-  {
-    var bytes = Convert.FromBase64String(base64);
-
-    // Validate minimum structure
-    if(bytes.Length < 1 + SaltSize + NonceSize + TagSize)
-      throw new ArgumentException("Invalid encrypted data length");
-
-    if(bytes[0] != CurrentVersion)
-      throw new NotSupportedException($"Unsupported version: {bytes[0]}");
-
-    return new Cipher(bytes);
-  }
+  
 }
