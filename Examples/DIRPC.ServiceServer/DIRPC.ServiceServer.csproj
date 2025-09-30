@@ -37,13 +37,13 @@
     <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="8.0.0" />
   </ItemGroup>
 
-<PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
-  <DefineConstants>$(DefineConstants);WINDOWS</DefineConstants>
-</PropertyGroup>
+  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
+    <DefineConstants>$(DefineConstants);WINDOWS</DefineConstants>
+  </PropertyGroup>
 
-<PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Linux'))">
-  <DefineConstants>$(DefineConstants);LINUX</DefineConstants>
-</PropertyGroup>
+  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Linux'))">
+    <DefineConstants>$(DefineConstants);LINUX</DefineConstants>
+  </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\DIRPC.Shared\DIRPC.Shared.csproj" />
