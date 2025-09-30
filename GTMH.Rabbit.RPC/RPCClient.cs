@@ -111,7 +111,7 @@ namespace GTMH.Rabbit.RPC
       bool failure = true;
       try
       {
-        await m_PublishChannel.BasicPublishAsync(exchange: string.Empty, routingKey: QUEUE_NAME, mandatory: true, basicProperties: props, body: messageBytes, cts.Token).ConfigureAwait(false);
+        await m_PublishChannel.BasicPublishAsync(exchange: string.Empty, routingKey: QUEUE_NAME, mandatory: true, basicProperties: props, body: messageBytes).ConfigureAwait(false);
         failure = false;
       }
       finally
