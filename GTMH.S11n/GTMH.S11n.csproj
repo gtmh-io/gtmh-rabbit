@@ -4,7 +4,7 @@
     <OutputPath>vsbin/$(Configuration)</OutputPath>
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
     <IsRoslynComponent>true</IsRoslynComponent>
-    <PackageTags>c#,pickle</PackageTags>
+    <PackageTags>c#,polymorphic serialisation,s11n</PackageTags>
     <!-- for packaging -->
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
