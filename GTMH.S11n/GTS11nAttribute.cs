@@ -40,12 +40,12 @@ namespace GTMH.S11n
 		/// <summary>
 		/// The item may have been renamed, this was it's old name
 		/// </summary>
-		public string ? AKA = null;
+		public string AKA = null;
     /// <summary>
     /// For custome parse - turn string type representation to an r-value.
     /// For pod the Parse
     /// </summary>
-    public string ? Parse = null;
-    public string ? DeParse = null;
+    public string Parse = null;
+    public string DeParse = null;
 	}
 }
