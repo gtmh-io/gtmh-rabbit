@@ -15,6 +15,7 @@
     <Compile Remove="vsbin\**" />
     <EmbeddedResource Remove="vsbin\**" />
     <None Remove="vsbin\**" />
+    <None Remove=".*" />
   </ItemGroup>
 
   <ItemGroup>

@@ -12,6 +12,10 @@ namespace GTMH.Security
     {
       this.Secret = a_Secret;
     }
+    public CipherEncryption(ISecretProvider a_Provider)
+    {
+      this.Secret = a_Provider.Secret;
+    }
     public string Decrypt(string a_Encrypted)
     {
       if(!Cipher.TryParse(a_Encrypted, out var cipher))
