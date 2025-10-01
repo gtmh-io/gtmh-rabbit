@@ -1,5 +1,4 @@
-﻿using GTMH.DI.Security;
-using GTMH.Security;
+﻿using GTMH.Security;
 using GTMH.Util;
 
 using Microsoft.Extensions.Configuration;
@@ -10,44 +9,10 @@ namespace GTMH.DI;
 
 public static class Hosted
 {
-  public static IHostApplicationBuilder AddGTMHCipherEncryption(this IHostApplicationBuilder builder)
-  {
-    builder.Services.AddSingleton<IDecryptor, GTMH.DI.Security.CipherEncryption>();
-    builder.Services.AddOptions<CipherConfig>()
-      .Bind(builder.Configuration.GetSection(nameof(CipherConfig)))
-      .ValidateDataAnnotations()
-      .ValidateOnStart();
-    return builder;
-  }
-
-  public static IHostApplicationBuilder AddStdConfig(this IHostApplicationBuilder builder)
-  {
-    return builder.AddStdConfig(null);
-  }
-
-  public static IHostApplicationBuilder AddStdConfig(this IHostApplicationBuilder builder, string[] args, Dictionary<string, string> a_MappingsA, Dictionary<string,string> a_MappingsB, params Dictionary<string,string> [] a_VA)
-  {
-    var mappings = new Dictionary<string, string>();
-    foreach (var kvp in a_MappingsA) mappings.Add(kvp.Key, kvp.Value);
-    foreach (var kvp in a_MappingsB) mappings.Add(kvp.Key, kvp.Value);
-    foreach(var mapping in a_VA)
-    {
-      foreach (var kvp in mapping) mappings.Add(kvp.Key, kvp.Value);
-    }
-    return builder.AddStdConfig(args, mappings);
-  }
-
-  public static IHostApplicationBuilder AddStdConfig(this IHostApplicationBuilder builder, string [] ? args)
-  {
-    builder.Configuration
-      .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-      .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
-      .AddEnvironmentVariables()
-      .AddCommandLine(args??Array.Empty<string>());
-      return builder;
-  }
-
-  public static IHostApplicationBuilder AddStdConfig(this IHostApplicationBuilder builder, string [] ? args, params Dictionary<string, string> [] a_CmdLineMappings )
+  public static IHostApplicationBuilder AddStdConfig(this IHostApplicationBuilder builder)=> builder.AddStdConfig(null);
+  public static IHostApplicationBuilder AddStdConfig(this IHostApplicationBuilder builder, string [] ? args) => AddStdConfig(builder, args, Array.Empty<Dictionary<string, string>>());
+  public static IHostApplicationBuilder AddStdConfig(this IHostApplicationBuilder builder, string[]? args, Dictionary<string, string> a_CmdLineMappings)=>AddStdConfig(builder, args, new Dictionary<string, string>[] { a_CmdLineMappings });
+  public static IHostApplicationBuilder AddStdConfig(this IHostApplicationBuilder builder, string[]? args, IEnumerable<Dictionary<string, string>> a_CmdLineMappings)
   {
     // hoping for consistency
     var mappings = new Dictionary<string, string>();
@@ -70,7 +35,8 @@ public static class Hosted
       .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
       .AddEnvironmentVariables()
       .AddCommandLine(args??Array.Empty<string>(), mappings);
-      return builder;
+    return builder;
+
   }
 
   public static IHostApplicationBuilder SetPlaformService(this IHostApplicationBuilder builder, string [] a_Args)
