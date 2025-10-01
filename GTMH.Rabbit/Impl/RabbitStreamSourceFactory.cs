@@ -68,6 +68,9 @@ namespace GTMH.Rabbit.Impl
         public string Value { get; set; } = "<not_set>";
       }
 
+      /// <summary>
+      ///  this maps the listener (topic, listener_interface) pair to the rabbit id for same
+      /// </summary>
       ConcurrentDictionary<ListenerKey, ConsumerTag> m_TopicListeners = new();
       public Source(RabbitInstance<M>.StreamConnection<M> stream, ILogger a_Log, IMQTopology<M> a_Topology)
       {
