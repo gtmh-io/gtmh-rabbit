@@ -20,12 +20,12 @@ public static class Hosted
     return builder;
   }
 
-  public static IHostApplicationBuilder AddGTMHConfig(this IHostApplicationBuilder builder)
+  public static IHostApplicationBuilder AddStdConfig(this IHostApplicationBuilder builder)
   {
-    return builder.AddStdConfig(null, null);
+    return builder.AddStdConfig(null);
   }
 
-  public static IHostApplicationBuilder AddGTMHConfig(this IHostApplicationBuilder builder, string[] args, Dictionary<string, string> a_MappingsA, Dictionary<string,string> a_MappingsB, params Dictionary<string,string> [] a_VA)
+  public static IHostApplicationBuilder AddStdConfig(this IHostApplicationBuilder builder, string[] args, Dictionary<string, string> a_MappingsA, Dictionary<string,string> a_MappingsB, params Dictionary<string,string> [] a_VA)
   {
     var mappings = new Dictionary<string, string>();
     foreach (var kvp in a_MappingsA) mappings.Add(kvp.Key, kvp.Value);
@@ -37,13 +37,39 @@ public static class Hosted
     return builder.AddStdConfig(args, mappings);
   }
 
-  public static IHostApplicationBuilder AddStdConfig(this IHostApplicationBuilder builder, string [] ? args, Dictionary<string, string> ? a_CmdLineMappings = null)
+  public static IHostApplicationBuilder AddStdConfig(this IHostApplicationBuilder builder, string [] ? args)
   {
     builder.Configuration
       .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
       .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
       .AddEnvironmentVariables()
-      .AddCommandLine(args??Array.Empty<string>(), a_CmdLineMappings);
+      .AddCommandLine(args??Array.Empty<string>());
+      return builder;
+  }
+
+  public static IHostApplicationBuilder AddStdConfig(this IHostApplicationBuilder builder, string [] ? args, params Dictionary<string, string> [] a_CmdLineMappings )
+  {
+    // hoping for consistency
+    var mappings = new Dictionary<string, string>();
+    foreach(var mapping_set in a_CmdLineMappings)
+    {
+      foreach(var kvp in mapping_set)
+      {
+        if(mappings.TryGetValue(kvp.Key, out var currValue))
+        {
+          if(currValue != kvp.Value) throw new ArgumentException($"'{kvp.Key}' has multiple conflicting definitions");
+        }
+        else
+        {
+          mappings.Add(kvp.Key, kvp.Value);
+        }
+      }
+    }
+    builder.Configuration
+      .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+      .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
+      .AddEnvironmentVariables()
+      .AddCommandLine(args??Array.Empty<string>(), mappings);
       return builder;
   }
 
