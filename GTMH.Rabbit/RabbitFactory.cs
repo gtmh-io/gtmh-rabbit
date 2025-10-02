@@ -21,7 +21,7 @@ namespace GTMH.Rabbit
     public RabbitConfig Config { get; }
     public IDecryptor Decryptor { get; }
 
-    public string HostIdentity => Config.Host; // TODO - add virtualhost information
+    public string HostIdentity => Config.Identity;
 
     public RabbitFactory(IOptions<RabbitConfig> a_Config, IDecryptor a_Decryptor)
     {
@@ -36,7 +36,10 @@ namespace GTMH.Rabbit
 
     public IConnectionFactory Create()
     {
-      return new RabbitMQ.Client.ConnectionFactory { HostName = Config.Host };
+      var dflt  =new RabbitMQ.Client.ConnectionFactory();
+      var password = Config.Password ?? dflt.Password;
+      var user = Config.User ?? dflt.UserName;
+      return new RabbitMQ.Client.ConnectionFactory { HostName = Config.Host, UserName=user, Password = password };
     }
   }
 }
