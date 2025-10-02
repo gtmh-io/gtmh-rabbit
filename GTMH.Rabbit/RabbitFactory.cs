@@ -37,7 +37,7 @@ namespace GTMH.Rabbit
     public IConnectionFactory Create()
     {
       var dflt  =new RabbitMQ.Client.ConnectionFactory();
-      var password = Config.Password ?? dflt.Password;
+      var password = Config.Password != null ? Decryptor.Decrypt(Config.Password) : dflt.Password;
       var user = Config.User ?? dflt.UserName;
       return new RabbitMQ.Client.ConnectionFactory { HostName = Config.Host, UserName=user, Password = password };
     }
