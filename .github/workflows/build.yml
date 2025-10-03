@@ -44,13 +44,13 @@ jobs:
 
     
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore src
     
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build src --no-restore
     
     - name: Run tests
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test src --no-build --verbosity normal
 
     - name: Cleanup
       if: always()
@@ -59,7 +59,7 @@ jobs:
         docker rm some-rabbit || true
 
     - name: Pack NuGet packages
-      run: dotnet pack --configuration Release --output ./nupkgs
+      run: dotnet pack src --configuration Release --output ./nupkgs
 
     # Only sign and publish on main branch pushes
     - name: Setup signing certificate
