@@ -2,9 +2,9 @@ Started out as a Rabbit Lib and evolved from there to three main components. In 
 - Full blown Rabbit RPC
 - Discovery for gRPC services using Rabbit
 - Typesafe Rabbit stream
-# GTMH.RPC - Code-Generated RPC Client/Server for C#
+# GTMH.Rabbit.RPC - Code-Generated RPC Client/Server for C#
 
-A high-performance RPC (Remote Procedure Call) framework for C# that uses Roslyn code generation to create strongly-typed clients and servers with minimal boilerplate. 
+A high-performance RPC (Remote Procedure Call) framework for C# that uses Roslyn code generation to create strongly-typed clients and servers with minimal boilerplate. Behind the scenes it uses the mature https://www.rabbitmq.com/client-libraries/dotnet for transport and https://github.com/protobuf-net/protobuf-net for serialisation
 
 ## Features
 
@@ -13,8 +13,6 @@ A high-performance RPC (Remote Procedure Call) framework for C# that uses Roslyn
 - **Async First** - Built on `ValueTask` for optimal performance
 - **Zero Reflection** - All serialization code is generated at compile time
 - **Minimal Overhead** - Direct method calls feel like local invocations
-
-Uses the excellent https://github.com/protobuf-net/protobuf-net serialisation library for object serialisation
 
 ## Quick Start
 
@@ -47,7 +45,13 @@ await client.Connect();
 var result = await client.IntroducingAsync("client");
 Console.WriteLine($"RPC pleasantries... {result}");
 ```
-###📦 Installation
+### 📦 Installation
 ```bash
-dotnet add package GTMH.RPC
-dotnet add package GTMH.RPC.CodeGen
+dotnet add package GTMH.Rabbit.RPC
+dotnet add package GTMH.Rabbit.RPC.CodeGen
+```
+### The Elephant in the Room - gRPC
+Why not use gRPC?
+
+# Configuration free
+
