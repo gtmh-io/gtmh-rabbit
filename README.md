@@ -4,16 +4,17 @@ Started out as a Rabbit Lib and evolved from there to three main components. In 
 - Typesafe Rabbit stream
 # GTMH.RPC - Code-Generated RPC Client/Server for C#
 
-A high-performance RPC (Remote Procedure Call) framework for C# that uses Roslyn code generation to create strongly-typed clients and servers with minimal boilerplate.
+A high-performance RPC (Remote Procedure Call) framework for C# that uses Roslyn code generation to create strongly-typed clients and servers with minimal boilerplate. 
 
 ## Features
 
 - **Code Generation** - Roslyn-powered source generators create client/server code at compile time
 - **Type Safety** - Full IntelliSense support and compile-time checking
 - **Async First** - Built on `ValueTask` for optimal performance
-- **Transport Agnostic** - Pluggable transport layer (RabbitMQ included)
 - **Zero Reflection** - All serialization code is generated at compile time
 - **Minimal Overhead** - Direct method calls feel like local invocations
+
+Uses the excellent https://github.com/protobuf-net/protobuf-net serialisation library for object serialisation
 
 ## Quick Start
 
