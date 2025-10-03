@@ -2,7 +2,7 @@ Started out as a Rabbit Lib and evolved from there to three main components. In 
 - Full blown Rabbit RPC
 - Discovery for gRPC services using Rabbit
 - Typesafe Rabbit stream
-# GTMH.Rabbit.RPC - Code-Generated RPC Client/Server for C#
+# GTMH.Rabbit.RPC - Code-Gen RPC Client/Server for C#
 
 A high-performance RPC (Remote Procedure Call) framework for C# that uses Roslyn code generation to create strongly-typed clients and servers with minimal boilerplate. Behind the scenes it uses the mature https://www.rabbitmq.com/client-libraries/dotnet for transport and https://github.com/protobuf-net/protobuf-net for serialisation
 
@@ -61,7 +61,7 @@ As a minor point, GTMH.Rabbit.RPC on the server side is not tied to ASP.net and 
 
 From an esoteric point of view, as opposed to gRPC, the server doesn't know it's a server. In gRPC the server implementation is strongly tied to it's server-ness through inheritance. Here, the server simply implements an interface and RPC is optional.
 
-# GTMH.GRPC.Discovery - Code-Generated gRPC Service Discovery for C#
+# GTMH.GRPC.Discovery - Code-Gen gRPC Service Discovery for C#
 Configuration free gRPC hosting.
 
 For when you want to leave management of gRPC port configuration to the boss - the operating system
