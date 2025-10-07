@@ -20,16 +20,13 @@
     <EmbeddedResource Remove="vsbin\**" />
     <None Remove="GTMH.Rabbit.UnitTests\**" />
     <None Remove="vsbin\**" />
-    <None Include="README.md" Pack="true" PackagePath="\"/>
+    <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="GTMH" Version="1.1.5" />
     <PackageReference Include="RabbitMQ.Client" Version="7.1.2" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.9" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\GTMH\GTMH.csproj" />
   </ItemGroup>
 
 </Project>

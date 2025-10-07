@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="GTMH.DI" Version="1.1.4" />
     <PackageReference Include="Serilog" Version="4.3.0" />
     <PackageReference Include="Serilog.Extensions.Hosting" Version="9.0.0" />
     <PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0" />
@@ -47,7 +48,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DIRPC.Shared\DIRPC.Shared.csproj" />
-    <ProjectReference Include="..\..\GTMH.DI\GTMH.DI.csproj" />
     <ProjectReference Include="..\..\GTMH.Rabbit.RPC.DI\GTMH.Rabbit.RPC.DI.csproj" />
   </ItemGroup>
 </Project>
