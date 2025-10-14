@@ -47,10 +47,11 @@ jobs:
       run: dotnet restore src
     
     - name: Build
-      run: dotnet build src --no-restore
+      run: dotnet build src -c Release --no-restore
     
     - name: Run tests
-      run: dotnet test src --no-build --verbosity normal
+      #run: dotnet test src --no-build --verbosity normal
+      run: for D in $(find src -type d -a -name '*UnitTests'); do dotnet run -c Release --no-build --project $D; done
 
     - name: Cleanup
       if: always()
@@ -59,7 +60,7 @@ jobs:
         docker rm some-rabbit || true
 
     - name: Pack NuGet packages
-      run: dotnet pack src --configuration Release --output ./nupkgs
+      run: dotnet pack src -c Release --output ./nupkgs
 
     # Only sign and publish on main branch pushes
     - name: Setup signing certificate
